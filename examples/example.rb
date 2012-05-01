@@ -14,10 +14,10 @@ end
 class Author
   include Validation
 
-  assert self, Unique[:email]
+  assert Unique[:email]
 
   attribute :first_name, String
-  assert :first_name, :not_blank, :length => {:min => 4, :max => 5}
+  assert :first_name, :not_blank, :length => 4..5
 
   attribute :last_name, String
   assert :last_name, :not_blank
