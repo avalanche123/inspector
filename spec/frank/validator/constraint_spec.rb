@@ -25,38 +25,46 @@ end
 
 describe Frank::Validator::Constraint do
   describe 'simple constraint' do
-    subject { SimpleConstraint }
+    before(:each) do
+      @subject = SimpleConstraint
+    end
 
     it "has a name" do
-      subject.constraint_name.must_equal(:simple_constraint)
+      @subject.constraint_name.must_equal(:simple_constraint)
     end
   end
 
   describe 'with options' do
     describe 'no options specified' do
-      subject { WithOptions.new }
+      before(:each) do
+        @subject = WithOptions.new
+      end
 
       it 'inherits default option values' do
-        subject[:option].must_equal('option value')
-        subject[:another_option].must_equal('another value')
+        @subject[:option].must_equal('option value')
+        @subject[:another_option].must_equal('another value')
       end
     end
 
     describe 'options hash given' do
-      subject { WithOptions.new(:option => 'overriden') }
+      before(:each) do
+        @subject = WithOptions.new(:option => 'overriden')
+      end
 
       it 'overrides options' do
-        subject[:option].must_equal('overriden')
-        subject[:another_option].must_equal('another value')
+        @subject[:option].must_equal('overriden')
+        @subject[:another_option].must_equal('another value')
       end
     end
   end
 
   describe 'with default option' do
-    subject { WithDefaultOption.new('overriden value') }
+    before(:each) do
+      @subject = WithDefaultOption.new('overriden value')
+    end
 
     it 'accepts default option value in constructor' do
-      subject[:default_option].must_equal('overriden value')
+      @subject[:default_option].must_equal('overriden value')
     end
   end
 
