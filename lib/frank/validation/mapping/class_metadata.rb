@@ -1,12 +1,16 @@
-module Frank
-  module Mapping
-    class ClassMetadata
-      def add_constraint(constraint)
-        constraints << constraint
-      end
+require 'set'
 
-      def add_property_constraint(property, constraint)
-        property_constraints[property] << constraint
+module Frank
+  module Validation
+    module Mapping
+      class ClassMetadata
+        def attribute_constraints
+          @attribute_constraints ||= Hash.new(Set.new)
+        end
+
+        def constraints
+          @constraints ||= Set.new
+        end
       end
     end
   end

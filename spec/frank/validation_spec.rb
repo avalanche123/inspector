@@ -5,19 +5,18 @@ describe Frank::Validation do
     @subject = Class.new(BasicObject) do
       include Frank::Validation
     end
+    @mapping = Frank::Validation::Mapping.for(@subject)
   end
 
   it "has no constraints" do
-    @subject.constraints.must_be_empty
+    @mapping.constraints.must_be_empty
   end
 
   describe "#assert" do
     it "adds constraints" do
-      # metadata = # ClassMetadata.for(@subject)
-      # 
-      # @subject.assert :attribute, :test_constraint
-      # 
-      # metadata.constraints.length.must_equal(1)
+      @subject.assert :attribute, :test_constraint
+
+      @mapping.attribute_constraints[:attribute].length.must_equal(1)
     end
   end
 end
