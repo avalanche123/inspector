@@ -31,7 +31,7 @@ Frank.valid("request parameters") do
   property("address") do
     should have_properties("recipient", "street", "street2", "city", "state", "zip")
 
-    its_property("recipient") do
+    property("recipient") do
       should_not be_empty
       # should be_kind_of(String)
       should have_at_least(3).characters
@@ -39,7 +39,7 @@ Frank.valid("request parameters") do
       should have_only_letters
     end
 
-    its_property("street") do
+    property("street") do
       should_not be_empty
       # should be_kind_of(String)
       should have_at_least(3).characters
@@ -47,14 +47,14 @@ Frank.valid("request parameters") do
       should have_only_letters_and_numbers
     end
 
-    its_property("street2") do
+    property("street2") do
       # should be_kind_of(String)
       should have_at_least(3).characters
       should have_at_most(255).characters
       should have_only_letters_and_numbers
     end
 
-    its_property("city") do
+    property("city") do
       should_not be_empty
       # should be_kind_of(String)
       should have_at_least(3).characters
@@ -62,7 +62,7 @@ Frank.valid("request parameters") do
       should have_only_letters_and_numbers
     end
 
-    its_property("state") do
+    property("state") do
       should_not be_empty
       # should be_kind_of(String)
       should have_at_least(3).characters
@@ -70,7 +70,7 @@ Frank.valid("request parameters") do
       should have_only_letters
     end
 
-    its_property("zip") do
+    property("zip") do
       should_not be_empty
       # should be_kind_of(String)
       should have_at_most(5).characters
