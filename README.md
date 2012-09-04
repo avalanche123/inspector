@@ -129,7 +129,7 @@ end
 
 Frank.valid("required string entry") do
   should_not be_empty
-  should be_valid("string entry")
+  should be_valid("medium string entry")
 end
 
 Frank.valid(Address) do
