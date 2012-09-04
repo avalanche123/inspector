@@ -88,7 +88,7 @@ Frank.valid(Author) do
     should have_at_least(1).character
     should have_at_most(32).characters
     # or
-    # its.attribute(:length) do
+    # attribute(:length) do
     #   should be >= 4
     #   should be <= 5
     # end
