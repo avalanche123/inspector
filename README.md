@@ -71,7 +71,7 @@ Frank.valid(Address) do
   end
 end
 
-Frank.validator.describe(Author) do
+Frank.valid(Author) do
   should have_unique(:email) # custom validation constraint
   attribute(:email).should_not be_empty
   attribute(:email).should be_an_email # custom validation constraint
