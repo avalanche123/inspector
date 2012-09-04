@@ -143,7 +143,7 @@ Frank.valid(Address) do
     should have_only_letters_and_numbers # custom validation constraint
   end
 
-  attribute(:street2) do # optional
+  attribute(:street2) do # street2 is optional
     should be_valid("medium string entry")
     should have_only_letters_and_numbers
   end
