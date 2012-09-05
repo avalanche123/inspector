@@ -1,0 +1,332 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Ruby-validation by avalanche123</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Ruby-validation</h1>
+        <p class="header">ruby validation library</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/avalanche123/ruby-validation/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/avalanche123/ruby-validation/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/avalanche123/ruby-validation">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/avalanche123">avalanche123</a></p>
+
+
+      </header>
+      <section>
+        <h1>Frank</h1>
+
+<p>a ruby validation library</p>
+
+<h2>Disclaimer</h2>
+
+<p>This is a work in progress. Documented features are not yet implemented, this documentation is to describe what will be implemented.</p>
+
+<h2>Installing</h2>
+
+<div class="highlight"><pre>gem install frank
+</pre></div>
+
+<h2>Quick start</h2>
+
+<p>Let's say we have the following classes:</p>
+
+<div class="highlight"><pre><span class="no">Address</span> <span class="o">=</span> <span class="no">Struct</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:recipient</span><span class="p">,</span> <span class="ss">:street</span><span class="p">,</span> <span class="ss">:street2</span><span class="p">,</span> <span class="ss">:city</span><span class="p">,</span> <span class="ss">:state</span><span class="p">,</span> <span class="ss">:zip</span><span class="p">)</span>
+<span class="no">Author</span>  <span class="o">=</span> <span class="no">Struct</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:email</span><span class="p">,</span> <span class="ss">:first_name</span><span class="p">,</span> <span class="ss">:last_name</span><span class="p">,</span> <span class="ss">:address</span><span class="p">)</span>
+</pre></div>
+
+<p>To be able to validate them, we need to describe validation rules for those classes:</p>
+
+<div class="highlight"><pre><span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Address</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:recipient</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_only_letters</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:street</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_only_letters_and_numbers</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:street2</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># optional</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_only_letters_and_numbers</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:city</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_only_letters</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_at_exactly</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_only_uppercase_letters</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:zip</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_exactly_most</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_only_numbers</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Author</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">should</span> <span class="n">have_unique</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span> <span class="c1"># custom validation constraint</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_empty</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_an_email</span> <span class="c1"># custom validation constraint</span>
+  <span class="c1"># or</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_unique</span> <span class="c1"># custom validation constraint</span>
+    <span class="n">should</span> <span class="n">be_an_email</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:first_name</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">character</span>
+    <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="c1"># or</span>
+    <span class="c1"># attribute(:length) do</span>
+    <span class="c1">#   should be &gt;= 4</span>
+    <span class="c1">#   should be &lt;= 5</span>
+    <span class="c1"># end</span>
+    <span class="c1"># has different validation semantics</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:last_name</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">character</span>
+    <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:address</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_valid</span>
+  <span class="c1"># or</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:address</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="no">Address</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+
+<p>Now we can validate any instance of address or author:</p>
+
+<div class="highlight"><pre><span class="n">address</span> <span class="o">=</span> <span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"John Smith"</span><span class="p">,</span> <span class="s2">"123 Sesame Street"</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="s2">"Neverland"</span><span class="p">,</span> <span class="s2">"NY"</span><span class="p">,</span> <span class="s2">"94608"</span><span class="p">)</span>
+<span class="n">author</span>  <span class="o">=</span> <span class="no">Author</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"username@example.com"</span><span class="p">,</span> <span class="s2">"John"</span><span class="p">,</span> <span class="s2">"Smith"</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
+
+<span class="n">validation_result</span> <span class="o">=</span> <span class="no">Frank</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+<span class="n">validation_result</span><span class="o">.</span><span class="n">valid?</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="kp">true</span>
+</pre></div>
+
+<p>The validations above seem a little too verbose, but we can simplify them:</p>
+
+<div class="highlight"><pre><span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"medium string entry"</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+  <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+  <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+<span class="k">end</span>
+
+<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">should_not</span> <span class="n">be_empty</span>
+  <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"medium string entry"</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Address</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:recipient</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_only_letters</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:street</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_only_letters_and_numbers</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:street2</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># street2 is optional</span>
+    <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"medium string entry"</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_only_letters_and_numbers</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:city</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_only_letters</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_at_exactly</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_only_uppercase_letters</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:zip</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_exactly_most</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="n">should</span> <span class="n">have_only_numbers</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">should_not</span> <span class="n">be_empty</span>
+  <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+  <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">character</span>
+  <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+<span class="k">end</span>
+
+<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Author</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">should</span> <span class="n">have_unique</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span> <span class="c1"># custom validation constraint</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_empty</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_an_email</span> <span class="c1"># custom validation constraint</span>
+  <span class="c1"># or</span>
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_unique</span> <span class="c1"># custom validation constraint</span>
+    <span class="n">should</span> <span class="n">be_an_email</span> <span class="c1"># custom validation constraint</span>
+  <span class="k">end</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:first_name</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:last_name</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
+
+  <span class="n">attribute</span><span class="p">(</span><span class="ss">:address</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_valid</span>
+<span class="k">end</span>
+</pre></div>
+
+<p>The above is nice when you have objects that you want to validate. Sometimes, however, all we have are Array and Hash structures. Frank supports those too:</p>
+
+<div class="highlight"><pre><span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"required string"</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">should_not</span> <span class="n">be_empty</span>
+  <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"create author request parameters"</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">should</span> <span class="n">have_properties</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"address"</span><span class="p">)</span>
+
+  <span class="n">property</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span>
+    <span class="n">should</span> <span class="n">have_only_letters_and_numbers</span>
+  <span class="k">end</span>
+
+  <span class="n">property</span><span class="p">(</span><span class="s2">"address"</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">should</span> <span class="n">have_properties</span><span class="p">(</span><span class="s2">"recipient"</span><span class="p">,</span> <span class="s2">"street"</span><span class="p">,</span> <span class="s2">"street2"</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">,</span> <span class="s2">"state"</span><span class="p">,</span> <span class="s2">"zip"</span><span class="p">)</span>
+
+    <span class="n">property</span><span class="p">(</span><span class="s2">"recipient"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span>
+      <span class="n">should</span> <span class="n">have_only_letters</span>
+    <span class="k">end</span>
+
+    <span class="n">property</span><span class="p">(</span><span class="s2">"street"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span>
+      <span class="n">should</span> <span class="n">have_only_letters_and_numbers</span>
+    <span class="k">end</span>
+
+    <span class="n">property</span><span class="p">(</span><span class="s2">"street2"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"medium string entry"</span><span class="p">)</span>
+      <span class="n">should</span> <span class="n">have_only_letters_and_numbers</span>
+    <span class="k">end</span>
+
+    <span class="n">property</span><span class="p">(</span><span class="s2">"city"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span>
+      <span class="n">should</span> <span class="n">have_only_letters_and_numbers</span>
+    <span class="k">end</span>
+
+    <span class="n">property</span><span class="p">(</span><span class="s2">"state"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string"</span><span class="p">)</span>
+      <span class="n">should</span> <span class="n">have_at_exactly</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+      <span class="n">should</span> <span class="n">have_only_uppercase_letters</span> <span class="c1"># custom validation constraint</span>
+    <span class="k">end</span>
+
+    <span class="n">property</span><span class="p">(</span><span class="s2">"zip"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string"</span><span class="p">)</span>
+      <span class="n">should</span> <span class="n">have_exactly_most</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+      <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">"name"</span> <span class="o">=&gt;</span> <span class="s2">"John Smith"</span><span class="p">,</span>
+  <span class="s2">"address"</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="s2">"recipient"</span> <span class="o">=&gt;</span> <span class="s2">"John Smith"</span><span class="p">,</span>
+    <span class="s2">"street"</span> <span class="o">=&gt;</span> <span class="s2">"123 Sesame Street"</span><span class="p">,</span>
+    <span class="s2">"street2"</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+    <span class="s2">"city"</span> <span class="o">=&gt;</span> <span class="s2">"Neverland"</span><span class="p">,</span>
+    <span class="s2">"state"</span> <span class="o">=&gt;</span> <span class="s2">"NY"</span><span class="p">,</span>
+    <span class="s2">"zip"</span> <span class="o">=&gt;</span> <span class="s2">"94608"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">validation_result</span> <span class="o">=</span> <span class="no">Frank</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="ss">:as</span> <span class="o">=&gt;</span> <span class="s2">"create author request parameters"</span><span class="p">)</span>
+
+<span class="n">validation_result</span><span class="o">.</span><span class="n">valid?</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="kp">true</span>
+</pre></div>
+
+<p>And arrays:</p>
+
+<div class="highlight"><pre><span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"email addresses"</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">emails</span>
+
+  <span class="n">children</span> <span class="k">do</span>
+    <span class="n">should_not</span> <span class="n">be_empty</span>
+    <span class="n">should</span> <span class="n">be_an_email</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+<h2>Built-in constraints</h2>
+
+<p>Frank ships with some built-in constraints. Most of them are inspired by RSpec's matchers.</p>
+
+<ul>
+<li>be_false     - validate falsiness of a value.</li>
+<li>be_true      - validate truthyness of a value.</li>
+<li>be_valid(type) - validate an object as a valid type (defaults to its class).</li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		          <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-18882040-3");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
