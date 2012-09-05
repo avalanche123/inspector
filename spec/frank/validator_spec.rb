@@ -1,27 +1,30 @@
 require 'spec_helper'
 
 describe(Frank::Validator) do
-  let(:validation_contexts) { double() }
+  let(:walker) { double() }
   let(:metadata_map) { double() }
-  let(:validator) { Frank::Validator.new(metadata_map, validation_contexts) }
+  let(:constraint_violation_lists) { double() }
+  let(:validator) { Frank::Validator.new(metadata_map, walker, constraint_violation_lists) }
 
   describe "#valid" do
+    let(:metadata_builder) { double() }
+
     it "configures Validatable" do
-      metadata_map.should_receive(:add_metadata_for).with(nil)
-      validator.valid(nil)
+      metadata_map.should_receive(:add_metadata_for).with(nil).and_return(metadata_builder)
+      expect(validator.valid(nil)).to be(metadata_builder)
     end
   end
 
   describe "#validate" do
     let(:metadata) { double() }
-    let(:validation_context) { double() }
+    let(:constraint_violation_list) { double() }
 
     it "raises if can't find Metadata" do
-      validation_contexts.should_receive(:new).and_return(validation_context)
+      constraint_violation_lists.stub(:new) { constraint_violation_list }
       metadata_map.should_receive(:get_metadata_for).with(NilClass).and_return(metadata)
-      metadata.should_receive(:run_validations).with(nil, validation_context)
+      walker.should_receive(:walk_object).with(metadata, nil, constraint_violation_list)
 
-      expect(validator.validate(nil)).to be(validation_context)
+      expect(validator.validate(nil)).to be(constraint_violation_list)
     end
   end
 end

@@ -1,5 +1,5 @@
 module Frank
-  class MetadataBuilder
+  class DSL
     include Constraints
 
     def set_metadata(metadata)
@@ -10,15 +10,7 @@ module Frank
       constraints.each do |constraint|
         validate_constraint(constraint)
 
-        @metadata.positive_constraints.push(constraint)
-      end
-    end
-
-    def should_not(*constraints)
-      constraints.each do |constraint|
-        validate_constraint(constraint)
-
-        @metadata.negative_constraints.push(constraint)
+        @metadata.constraints.push(constraint)
       end
     end
 
@@ -41,9 +33,9 @@ module Frank
     end
 
     def validate_constraint(constraint)
-      unless constraint.respond_to?(:validate) && constraint.respond_to?(:invalidate)
+      unless constraint.respond_to?(:validate)
         raise ArgumentError, "constraint #{constraint.inspect} is invalid as it " +
-                             "doesn't respond to validate and invalidate"
+                             "doesn't respond to validate"
       end
     end
   end

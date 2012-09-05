@@ -1,8 +1,9 @@
 module Frank
   class Validator
-    def initialize(metadata_map, validation_contexts)
+    def initialize(metadata_map, walker, constraint_violation_lists)
       @metadata_map = metadata_map
-      @validation_contexts = validation_contexts
+      @walker = walker
+      @constraint_violation_lists = constraint_violation_lists
     end
 
     def valid(type, &block)
@@ -10,18 +11,12 @@ module Frank
     end
 
     def validate(object, opts = {})
-      type               = opts.fetch(:as) { object.class }
-      validation_context = new_validation_context
+      type = opts.fetch(:as) { object.class }
+      violations = opts.fetch(:violations) { @constraint_violation_lists.new(object) }
 
-      @metadata_map.get_metadata_for(type).run_validations(object, validation_context)
+      @walker.walk_object(@metadata_map.get_metadata_for(type), object, violations)
 
-      validation_context
-    end
-
-    private
-
-    def new_validation_context
-      @validation_contexts.new
+      violations
     end
   end
 end
