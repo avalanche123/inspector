@@ -4,8 +4,8 @@ Feature: validity specification
   As a developer
   I want to specify what a valid object looks like
 
-  Scenario: violated validation context
-    Given a file named "valid.rb" with:
+  Scenario: false is not true
+    Given a file named "false_is_not_true.rb" with:
       """
       require 'frank'
 
@@ -15,7 +15,7 @@ Feature: validity specification
 
       p Frank.validate(false, :as => "true value")
       """
-    When I run `ruby valid.rb`
+    When I run `ruby false_is_not_true.rb`
     Then the output should contain:
       """
       false:
