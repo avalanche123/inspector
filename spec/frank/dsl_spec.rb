@@ -28,10 +28,8 @@ describe(Frank::DSL) do
       end
 
       it "raises if invalid constraint given" do
-        expect { builder.should(nil) }.to raise_error(
-          ArgumentError,
-          "constraint nil is invalid as it doesn't respond to validate"
-        )
+        expect { builder.should("") }.to raise_error \
+          ArgumentError, "constraint \"\" is invalid as it doesn't respond to validate"
       end
     end
   end

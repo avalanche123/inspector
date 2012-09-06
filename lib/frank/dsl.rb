@@ -6,12 +6,16 @@ module Frank
       @metadata = metadata
     end
 
-    def should(*constraints)
-      constraints.each do |constraint|
-        validate_constraint(constraint)
+    def should(constraint = nil)
+      return self if constraint.nil?
 
-        @metadata.constraints.push(constraint)
-      end
+      validate_constraint(constraint)
+
+      @metadata.constraints.push(constraint)
+    end
+
+    def should_not(constraint = nil)
+      return self if constraint.nil?
     end
 
     def property(name, &block)
@@ -19,7 +23,12 @@ module Frank
     end
 
     def attribute(name, &block)
-      new_builder(@metadata.add_attribute_metadata(name.to_sym), &block)
+      metadata  = @metadata
+      @metadata = @metadata.add_attribute_metadata(name.to_sym)
+
+      instance_eval(&block) if block_given?
+
+      @metadata = metadata
     end
 
     def children(&block)

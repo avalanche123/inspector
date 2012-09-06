@@ -12,7 +12,7 @@ module Frank
       end
 
       metadata.attribute_metadatas.each do |attribute, attribute_metadata|
-        walk_object(attribute_metadata, object.send(attribute), violations, ".#{attribute}")
+        walk_object(attribute_metadata, object.__send__(attribute), violations, ".#{attribute}")
       end
     end
   end

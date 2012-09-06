@@ -10,7 +10,7 @@ module Frank
       end
 
       def inspect
-        "#{@property_path}#{@constraint.inspect}"
+        "#{@property_path} #{@constraint.inspect}"
       end
     end
   end
