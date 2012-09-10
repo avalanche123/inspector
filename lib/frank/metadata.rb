@@ -65,5 +65,12 @@ module Frank
     def property_metadatas
       @property_metadatas.values
     end
+
+    def children(object, &block)
+      object.each_with_index(&block)
+    rescue NoMethodError
+      raise "metadata for #{@type.inspect} contains children metadata, however " +
+            "#{object.inspect}.each_with_index is not defined"
+    end
   end
 end
