@@ -1,12 +1,16 @@
 module Frank
   module Constraints
-    class True < Base
-      def valid?(actual)
+    module True
+      def self.valid?(actual)
         !!actual
       end
 
-      def inspect
-        "should be true"
+      def self.to_s
+        "true"
+      end
+
+      def self.inspect
+        "#<Frank::Constraints::True>"
       end
     end
   end

@@ -1,6 +1,6 @@
 module Frank
   module Constraints
-    class Email < Base
+    module Email
       PATTERN = begin
         if (RUBY_VERSION == '1.9.2' && RUBY_ENGINE == 'jruby' && JRUBY_VERSION <= '1.6.3') || RUBY_VERSION == '1.9.3'
           # There is an obscure bug in jruby 1.6 that prevents matching
@@ -39,12 +39,16 @@ module Frank
         pattern        = /\A#{addr_spec}\z/u
       end
 
-      def valid?(email)
+      def self.valid?(email)
         !(PATTERN =~ email).nil?
       end
 
-      def inspect
-        "should be an email"
+      def self.to_s
+        "an email"
+      end
+
+      def self.inspect
+        "#<Frank::Constraints::Email>"
       end
     end
   end

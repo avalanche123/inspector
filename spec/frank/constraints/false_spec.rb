@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Frank::Constraints::False do
-  let(:constraint) { Frank::Constraints::False.new }
+  let(:constraint) { Frank::Constraints::False }
 
   [
     [true, false],

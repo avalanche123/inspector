@@ -1,9 +1,44 @@
 module Frank
   module Constraints
-    class Have < Base
+    module Have
+      class AtLeast
+        include Have
+
+        def to_s
+          "at least #{@expected.inspect}"
+        end
+
+        def compare(actual)
+          actual >= @expected
+        end
+      end
+
+      class AtMost
+        include Have
+
+        def to_s
+          "at most #{@expected.inspect}"
+        end
+
+        def compare(actual)
+          actual <= @expected
+        end
+      end
+
+      class Exactly
+        include Have
+
+        def to_s
+          "exactly #{@expected.inspect}"
+        end
+
+        def compare(actual)
+          actual == @expected
+        end
+      end
+
       def initialize(expected)
         @expected = expected.to_i
-        @collection_name
       end
 
       def valid?(collection_or_owner)
@@ -13,10 +48,6 @@ module Frank
         compare(collection.__send__(query_method))
       end
 
-      def inspect
-        "should have exactly #{@expected.inspect}"
-      end
-
       def method_missing(method, *args, &block)
         @collection_name = method
         @args = args
@@ -24,11 +55,11 @@ module Frank
         self
       end
 
-      private
-
-      def compare(actual)
-        actual == @expected
+      def inspect
+        "#<#{self.class.inspect}:#{'0x00%x' % (__id__ << 1)} expected=#{@expected.inspect}>"
       end
+
+      private
 
       def determine_collection(collection_or_owner)
         collection_or_owner.__send__(@collection_name, *@args, &@block) if collection_or_owner.respond_to?(@collection_name)

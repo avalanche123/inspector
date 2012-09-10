@@ -1,30 +1,70 @@
 require 'spec_helper'
 
 describe(Frank::Validator) do
-  let(:walker) { double() }
   let(:metadata_map) { double() }
-  let(:constraint_violation_lists) { double() }
-  let(:validator) { Frank::Validator.new(metadata_map, walker, constraint_violation_lists) }
+  let(:type_metadata_class) { double() }
+  let(:violation_list_class) { double() }
+  let(:walker_class) { double() }
+  let(:validator) {
+    Frank::Validator.new(
+      metadata_map,
+      type_metadata_class,
+      violation_list_class,
+      walker_class
+    )
+  }
 
   describe "#valid" do
-    let(:metadata_builder) { double() }
+    let(:metadata) { double() }
 
-    it "configures Validatable" do
-      metadata_map.should_receive(:add_metadata_for).with(nil).and_return(metadata_builder)
-      expect(validator.valid(nil)).to be(metadata_builder)
+    before(:each) do
+      type_metadata_class.should_receive(:new).with(NilClass).and_return(metadata)
+      metadata_map.should_receive(:[]=).with(NilClass, metadata).and_return(metadata)
+    end
+
+    it "registers new TypeMetadata in metadata map" do
+      expect(validator.valid(NilClass)).to be(metadata)
+    end
+
+    it "yields registered TypeMetadata" do
+      validator.valid(NilClass) do |nil_metadata|
+        expect(nil_metadata).to be(metadata)
+      end
+    end
+
+    it "evaluates block in context of registered TypeMetadata" do
+      context = nil
+      validator.valid(NilClass) do
+        context = self
+      end
+
+      expect(context).to be(metadata)
     end
   end
 
   describe "#validate" do
     let(:metadata) { double() }
-    let(:constraint_violation_list) { double() }
+    let(:violation_list) { double() }
+    let(:walker) { double() }
+    let(:object) { double() }
 
-    it "raises if can't find Metadata" do
-      constraint_violation_lists.stub(:new) { constraint_violation_list }
-      metadata_map.should_receive(:get_metadata_for).with(NilClass).and_return(metadata)
-      walker.should_receive(:walk_object).with(metadata, nil, constraint_violation_list)
+    before(:each) do
+      violation_list_class.stub(:new) { violation_list }
+      walker_class.should_receive(:new).with(violation_list).and_return(walker)
+      walker.should_receive(:walk_object).with(metadata, object, "")
+    end
 
-      expect(validator.validate(nil)).to be(constraint_violation_list)
+    it "walks object using its class" do
+      object.stub(:class) { NilClass }
+      metadata_map.should_receive(:[]).with(NilClass).and_return(metadata)
+
+      expect(validator.validate(object)).to be(violation_list)
+    end
+
+    it "walks object using metadata type specified" do
+      metadata_map.should_receive(:[]).with("metadata type").and_return(metadata)
+
+      expect(validator.validate(object, :as => "metadata type")).to be(violation_list)
     end
   end
 end

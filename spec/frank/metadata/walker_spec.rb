@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe(Frank::MetadataWalker) do
+describe(Frank::Metadata::Walker) do
   describe "#walk_object" do
     it ""
   end

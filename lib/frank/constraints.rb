@@ -11,28 +11,28 @@ module Frank
     autoload :Eq,          'frank/constraints/eq'
 
     def be_false
-      Frank::Constraints::False.new
+      Frank::Constraints::False
     end
 
     def be_true
-      Frank::Constraints::True.new
+      Frank::Constraints::True
     end
 
     def have_at_least(n)
-      Frank::Constraints::HaveAtLeast.new(n)
+      Frank::Constraints::Have::AtLeast.new(n)
     end
 
     def have_at_most(n)
-      Frank::Constraints::HaveAtMost.new(n)
+      Frank::Constraints::Have::AtMost.new(n)
     end
 
     def have(n)
-      Frank::Constraints::Have.new(n)
+      Frank::Constraints::Have::Exactly.new(n)
     end
     alias :have_exactly :have
 
     def be_email
-      Frank::Constraints::Email.new
+      Frank::Constraints::Email
     end
     alias :be_an_email :be_email
 

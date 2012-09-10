@@ -1,6 +1,6 @@
 module Frank
   module Constraints
-    class Eq < Base
+    class Eq
       def initialize(expected)
         @expected = expected
       end
@@ -9,8 +9,12 @@ module Frank
         actual == @expected
       end
 
+      def to_s
+        "equal #{@expected.inspect}"
+      end
+
       def inspect
-        "should == #{@expected.inspect}"
+        "#<#{self.class.inspect}:#{'0x00%x' % (__id__ << 1)} expected=#{@expected.inspect}>"
       end
     end
   end
