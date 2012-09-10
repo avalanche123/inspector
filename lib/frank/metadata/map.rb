@@ -6,7 +6,9 @@ module Frank
       end
 
       def []=(type, metadata)
-        raise "#{metadata.inspect} is not a Frank::Metadata" unless metadata.kind_of?(Metadata)
+        unless metadata.kind_of?(Metadata)
+          raise "#{metadata.inspect} is not a Frank::Metadata"
+        end
 
         @map[type] = metadata
       end
