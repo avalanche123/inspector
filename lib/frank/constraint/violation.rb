@@ -3,16 +3,29 @@ module Frank
     class Violation
       autoload :List, 'frank/constraint/violation/list'
 
-      attr_reader :property_path, :value, :constraint
+      attr_reader :constraint
 
-      def initialize(property_path, value, constraint)
-        @property_path = property_path
-        @value = value
+      def initialize(positive, constraint)
+        @positive = positive
         @constraint = constraint
       end
 
+      def positive?
+        @positive
+      end
+
+      def negative?
+        !@positive
+      end
+
       def to_s
-        "#{@property_path} #{@constraint}".lstrip
+        expectation = @positive ? 'should' : 'should_not'
+
+        "#{expectation}.#{@constraint}"
+      end
+
+      def inspect
+        "#<violation constraint=#{@constraint.inspect}, positive=#{@positive.inspect}>"
       end
     end
   end

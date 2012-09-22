@@ -10,11 +10,11 @@ module Frank
       end
 
       def to_s
-        "equal #{@expected.inspect}"
+        "eq"
       end
 
       def inspect
-        "#<#{self.class.inspect}:#{'0x00%x' % (__id__ << 1)} expected=#{@expected.inspect}>"
+        "#<== #{@expected.inspect}>"
       end
     end
   end

@@ -57,46 +57,41 @@ Feature: syntax
     Given a file named "object.rb" with:
       """
       require 'frank'
-  
+
       User = Struct.new(:username, :email)
-  
+
       Frank.valid(User) do
         attribute(:username) do
           should_not be_empty
           should be_kind_of(String)
           should have_at_least(8).characters
           should have_at_most(32).characters
-          # attribute(:length) do
-          #   should == 10
-          # end
         end
-  
+
         attribute(:email) do
           should_not be_empty
           should be_kind_of(String)
           should be_an_email
         end
       end
-  
-      violations = Frank.validate(User.new("", "bademail"))
-      {
-        :username => {
-          :not_is_empty => "Username cannot be empty",
-          :is_kind_of   => "Username must be a %{type}",
-          :has_at_least => "Username must have at least %{n} characters"
-        }
-      }
 
-      violations.at(".username").each do |violation|
-        violation.constraint.is?('not empty')
+      user       = User.new("", "bademail")
+      violations = Frank.validate(user)
+
+      if violations.empty?
+        puts "user #{user.inspect} is valid"
+      else
+        puts "invalid user #{user.inspect}:"
+        puts violations.to_s.split("\n").map { |line| "  #{line}" }.join("\n")
       end
       """
     When I run `ruby object.rb`
     Then the output should contain:
       """
-      #<struct User username=nil, email="bademail">.username:
-        should not be empty
-        should have at least 32 characters
-      #<struct User username=nil, email="bademail">.email:
-        should be an email
+      invalid user #<struct User username="", email="bademail">:
+        username:
+          should_not.be_empty
+          should.have_at_least
+        email:
+          should.be_an_email
       """

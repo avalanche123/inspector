@@ -15,11 +15,11 @@ module Frank
       end
 
       def to_s
-        @args.size > 0 ? ".#{@method}?(#{@args.map(&:inspect).join(", ")})" : ".#{@method}?"
+        "be_#{@method}"
       end
 
       def inspect
-        "#<#{self.class.inspect}:#{'0x00%x' % (__id__ << 1)} method=\"#{@method}?\">"
+        "#<#{@method}>"
       end
     end
   end

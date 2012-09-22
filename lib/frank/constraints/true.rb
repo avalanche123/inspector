@@ -1,17 +1,17 @@
 module Frank
   module Constraints
-    module True
-      def self.valid?(actual)
-        !!actual
-      end
+    True = Object.new
 
-      def self.to_s
-        "true"
-      end
+    def True.valid?(actual)
+      !!actual
+    end
 
-      def self.inspect
-        "#<Frank::Constraints::True>"
-      end
+    def True.to_s
+      "be_true"
+    end
+
+    def True.inspect
+      "#<true>"
     end
   end
 end

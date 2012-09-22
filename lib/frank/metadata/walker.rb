@@ -1,72 +1,64 @@
 module Frank
   module Metadata
     class Walker
-      def initialize(violations)
-        @violations = violations
+      def initialize(violation_list_class, violation_class)
+        @violation_list_class = violation_list_class
+        @violation_class      = violation_class
       end
 
       def walk_object(metadata, object, property_path)
-        metadata.positive_constraints.each do |constraint|
-          unless constraint.valid?(object)
-            @violations << Constraint::Violation.new(property_path, object, constraint)
+        violations = @violation_list_class.new(property_path, object)
+
+        # determine all object constraints that are not valid
+        failed_constraints = metadata.constraints.select do |positive, constraint|
+          positive ^ constraint.valid?(object)
+        end
+
+        # walk object attributes, properties and children if object constraints passed
+        if failed_constraints.empty?
+          metadata.attribute_metadatas.each do |metadata|
+            attribute_violations = walk_attribute(metadata, object, property_path)
+            violations << attribute_violations unless attribute_violations.empty?
+          end
+
+          metadata.property_metadatas.each do |metadata|
+            property_violations = walk_property(metadata, object, property_path)
+            violations << property_violations unless property_violations.empty?
+          end
+
+          metadata.children_metadata.children(object) do |child, index|
+            child_violations = walk_object(metadata, child, index, property_path)
+            violations << child_violations unless child_violations.empty?
+          end unless metadata.children_metadata.nil?
+        else
+          failed_constraints.each do |positive, constraint|
+            violations << @violation_class.new(positive, constraint)
           end
         end
 
-        metadata.negative_constraints.each do |constraint|
-          if constraint.valid?(object)
-            @violations << Constraint::Violation.new(property_path, object, constraint)
-          end
-        end
-
-        metadata.attribute_metadatas.each do |metadata|
-          walk_attribute(metadata, object, property_path)
-        end
-
-        metadata.property_metadatas.each do |metadata|
-          walk_property(metadata, object, property_path)
-        end
-
-        unless metadata.children_metadata.nil?
-          walk_children(metadata.children_metadata, object, property_path)
-        end
-      end
-
-      def walk_attribute(metadata, object, property_path)
-        walk_object(metadata, metadata.attribute_value(object), "#{property_path}.#{metadata.attribute}")
-      end
-
-      def walk_property(metadata, object, property_path)
-        walk_object(metadata, metadata.property_value(object), "#{property_path}[#{metadata.property}]")
-      end
-
-      def walk_children(metadata, object, context)
-        metadata.children(object) do |child, index|
-          walk_object(metadata, child, "#{property_path}[#{index}]")
-        end
+        violations
       end
 
       private
 
-      def handle_constraints(handler, constraints)
-        constraints.each do |constraint|
-          handler.handle(object, constraint)
-        end
+      def walk_attribute(metadata, object, property_path)
+        attribute_path  = [property_path, metadata.attribute].reject(&:empty?).join(".")
+        attribute_value = metadata.attribute_value(object)
+
+        walk_object(metadata, attribute_value, attribute_path)
       end
 
-      def walk_children_metadata(metadata, object, context)
-        object.each_with_index do |child, i|
-          walk_object_metadata(metadata.children_metadata, child, context.for_path("[#{i}]"))
-        end unless metadata.children_metadata.nil?
+      def walk_property(metadata, object, property_path)
+        property_path  = "#{property_path}[#{metadata.property}]"
+        property_value = metadata.property_value(object)
+
+        walk_object(metadata, property_value, property_path)
       end
 
-      def walk_property_metadata(metadata, object, context)
-        walk_object_metadata(metadata, object[metadata.property], context)
-      end
+      def walk_child(metadata, object, index, property_path)
+        child_path = "#{property_path}[#{index}]"
 
-      def walk_attribute_metadatas(metadata, object, context)
-        metadata.attribute_metadatas.each do |metadata|
-          walk_object(metadata, object.__send__(metadata.attribute), context.for_path(".#{metadata.attribute}"))
-        end
+        walk_object(metadata, object, child_path)
       end
     end
   end

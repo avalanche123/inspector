@@ -2,7 +2,7 @@ module Frank
   module Constraints
     module Email
       PATTERN = begin
-        if (RUBY_VERSION == '1.9.2' && RUBY_ENGINE == 'jruby' && JRUBY_VERSION <= '1.6.3') || RUBY_VERSION == '1.9.3'
+        if (RUBY_VERSION == '1.9.2' && RUBY_ENGINE == 'jruby' && JRUBY_VERSION <= '1.6.3') || RUBY_VERSION >= '1.9.2'
           # There is an obscure bug in jruby 1.6 that prevents matching
           # on unicode properties here. Remove this logic branch once
           # a stable jruby release fixes this.
@@ -44,11 +44,11 @@ module Frank
       end
 
       def self.to_s
-        "an email"
+        "be_an_email"
       end
 
       def self.inspect
-        "#<Frank::Constraints::Email>"
+        "#<email>"
       end
     end
   end

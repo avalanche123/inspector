@@ -5,11 +5,15 @@ module Frank
         include Have
 
         def to_s
-          "at least #{@expected.inspect}"
+          "have_at_least"
         end
 
         def compare(actual)
           actual >= @expected
+        end
+
+        def inspect
+          "#<have at least #{@expected.inspect}>"
         end
       end
 
@@ -17,11 +21,15 @@ module Frank
         include Have
 
         def to_s
-          "at most #{@expected.inspect}"
+          "have_at_most"
         end
 
         def compare(actual)
           actual <= @expected
+        end
+
+        def inspect
+          "#<have at most #{@expected.inspect}>"
         end
       end
 
@@ -29,11 +37,15 @@ module Frank
         include Have
 
         def to_s
-          "exactly #{@expected.inspect}"
+          "have_exactly"
         end
 
         def compare(actual)
           actual == @expected
+        end
+
+        def inspect
+          "#<have exactly #{@expected.inspect}>"
         end
       end
 
@@ -53,10 +65,6 @@ module Frank
         @args = args
         @block = block
         self
-      end
-
-      def inspect
-        "#<#{self.class.inspect}:#{'0x00%x' % (__id__ << 1)} expected=#{@expected.inspect}>"
       end
 
       private

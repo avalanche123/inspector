@@ -17,8 +17,7 @@ module Frank
 
   @validator = Validator.new(
     Metadata::Map.new,
-    TypeMetadata,
-    Constraint::Violation::List,
-    Metadata::Walker
+    Metadata::Walker.new(Constraint::Violation::List, Constraint::Violation),
+    TypeMetadata
   )
 end

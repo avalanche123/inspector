@@ -6,14 +6,12 @@ module Frank
     include Constraints
 
     attr_reader :type, \
-                :positive_constraints, \
-                :negative_constraints, \
+                :constraints, \
                 :children_metadata
 
     def initialize(type)
       @type = type
-      @positive_constraints = []
-      @negative_constraints = []
+      @constraints = []
       @property_metadatas = {}
       @attribute_metadatas = {}
     end
@@ -45,7 +43,7 @@ module Frank
     def should(constraint = nil)
       return PositiveComparator.new(self) if constraint.nil?
 
-      @positive_constraints << constraint
+      @constraints << [true, constraint]
 
       self
     end
@@ -53,7 +51,7 @@ module Frank
     def should_not(constraint = nil)
       return NegativeComparator.new(self) if constraint.nil?
 
-      @negative_constraints << constraint
+      @constraints << [false, constraint]
 
       self
     end

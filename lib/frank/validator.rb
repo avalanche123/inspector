@@ -1,10 +1,9 @@
 module Frank
   class Validator
-    def initialize(metadata_map, type_metadata_class, violation_list_class, walker_class)
+    def initialize(metadata_map, walker, type_metadata_class)
       @metadata_map = metadata_map
+      @walker = walker
       @type_metadata_class = type_metadata_class
-      @violation_list_class = violation_list_class
-      @walker_class = walker_class
     end
 
     def valid(type, &block)
@@ -18,12 +17,8 @@ module Frank
     def validate(object, opts = {})
       type       = opts.fetch(:as) { object.class }
       metadata   = @metadata_map[type]
-      violations = @violation_list_class.new
-      walker     = @walker_class.new(violations)
 
-      walker.walk_object(metadata, object, "")
-
-      violations
+      @walker.walk_object(metadata, object, "")
     end
   end
 end

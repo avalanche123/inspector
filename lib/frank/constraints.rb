@@ -5,8 +5,6 @@ module Frank
     autoload :True,        'frank/constraints/true'
     autoload :Predicate,   'frank/constraints/predicate'
     autoload :Have,        'frank/constraints/have'
-    autoload :HaveAtLeast, 'frank/constraints/have_at_least'
-    autoload :HaveAtMost,  'frank/constraints/have_at_most'
     autoload :Email,       'frank/constraints/email'
     autoload :Eq,          'frank/constraints/eq'
 
@@ -36,7 +34,7 @@ module Frank
     end
     alias :be_an_email :be_email
 
-    def ==(expected)
+    def eq(expected)
       Frank::Constraints::Eq.new(expected)
     end
 
