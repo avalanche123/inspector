@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-shared_examples_for Frank::Metadata do
+shared_examples_for Inspector::Metadata do
   let(:type) { double() }
 
   describe "#type" do

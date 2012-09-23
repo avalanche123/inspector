@@ -7,13 +7,13 @@ Feature: syntax
   Scenario: true is true
     Given a file named "true_is_true.rb" with:
       """
-      require 'frank'
+      require 'inspector'
 
-      Frank.valid("true value") do
+      Inspector.valid("true value") do
         should be_true
       end
 
-      violations = Frank.validate(true, :as => "true value")
+      violations = Inspector.validate(true, :as => "true value")
       if violations.empty?
         puts "true is true"
         exit 0
@@ -31,13 +31,13 @@ Feature: syntax
   Scenario: false is not true
     Given a file named "false_is_not_true.rb" with:
       """
-      require 'frank'
+      require 'inspector'
 
-      Frank.valid("true value") do
+      Inspector.valid("true value") do
         should be_true
       end
 
-      violations = Frank.validate(false, :as => "true value")
+      violations = Inspector.validate(false, :as => "true value")
       if violations.empty?
         puts "true is true"
         exit 0
@@ -55,11 +55,11 @@ Feature: syntax
   Scenario: object attributes
     Given a file named "object.rb" with:
       """
-      require 'frank'
+      require 'inspector'
 
       User = Struct.new(:username, :email)
 
-      Frank.valid(User) do
+      Inspector.valid(User) do
         attribute(:username) do
           should_not be_empty
           should be_kind_of(String)
@@ -75,7 +75,7 @@ Feature: syntax
       end
 
       user       = User.new("", "bademail")
-      violations = Frank.validate(user)
+      violations = Inspector.validate(user)
 
       if violations.empty?
         puts "user #{user.inspect} is valid"

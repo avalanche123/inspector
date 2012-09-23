@@ -2,7 +2,7 @@
 # attribute constraints
 # property constraints
 
-Frank.valid(Address) do
+Inspector.valid(Address) do
   attribute(:street) do
     should_not be_empty
   end
@@ -17,7 +17,7 @@ end
 #   "[name]" => ["not.be_empty", "be_kind_of", "have_at_least", "have_at_most"]
 # }
 # 
-Frank.valid("request parameters") do
+Inspector.valid("request parameters") do
   should have_properties("name", "address")
 
   property("name") do
@@ -78,12 +78,12 @@ Frank.valid("request parameters") do
   end
 end
 
-result = Frank.validate({:some_key => 'some value'}, :as => "request parameters")
+result = Inspector.validate({:some_key => 'some value'}, :as => "request parameters")
 result.valid?
 result.errors
-# errors = Frank.validator_for("request parameters").validate({:some_key => 'some value'})
+# errors = Inspector.validator_for("request parameters").validate({:some_key => 'some value'})
 
-Frank.validator.describe(Author) do
+Inspector.validator.describe(Author) do
   should have_unique(:email)
 
   its.attribute(:first_name) do
@@ -109,7 +109,7 @@ Frank.validator.describe(Author) do
   its.attribute(:email).should be_an_email
 end
 
-errors = Frank.validator.validate(Author.new)
+errors = Inspector.validator.validate(Author.new)
 
 errors.each do |property, violations|
   property.name

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    frank (0.1.0)
+    inspector (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -40,6 +40,6 @@ PLATFORMS
 DEPENDENCIES
   aruba (~> 0.4)
   cucumber (~> 1.2)
-  frank!
+  inspector!
   rake (~> 0.9)
   rspec (~> 2.6)

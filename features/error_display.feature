@@ -5,12 +5,12 @@ Feature: error display
   Scenario: object attributes
     Given a file named "object.rb" with:
       """
-      require 'frank'
+      require 'inspector'
 
       Profile     = Struct.new(:first_name, :last_name, :date_of_birth, :preferences)
       User        = Struct.new(:username, :email, :profile)
 
-      Frank.valid(Profile) do
+      Inspector.valid(Profile) do
         attribute(:first_name) do
           should_not be_empty
           should be_kind_of(String)
@@ -36,7 +36,7 @@ Feature: error display
         end
       end
 
-      Frank.valid(User) do
+      Inspector.valid(User) do
         attribute(:username) do
           should_not be_empty
           should be_kind_of(String)
@@ -58,7 +58,7 @@ Feature: error display
         end
       end
 
-      errors = Frank.validate(User.new("", "bademail", Profile.new("", nil, false, {
+      errors = Inspector.validate(User.new("", "bademail", Profile.new("", nil, false, {
         "terms_and_conditions" => false,
         "show_email" => nil
       })))

@@ -1,4 +1,4 @@
-# Frank
+# Inspector
 
 a ruby validation library
 
@@ -9,7 +9,7 @@ This is a work in progress. Documented features are not yet implemented, this do
 ## Installing
 
 ```shell
-gem install frank
+gem install inspector
 ```
 
 ## Quick start
@@ -24,7 +24,26 @@ Author  = Struct.new(:email, :first_name, :last_name, :address)
 To be able to validate them, we need to describe validation rules for those classes:
 
 ```ruby
-Frank.valid(Address) do
+valid address
+  has attributes: recipient, street, street2, city, state
+
+  recipient:
+    not empty
+    is a string
+    has between 3 and 255 characters
+    has only letters
+
+  street:
+
+
+{
+  'name' => ''
+}    
+
+
+Inspector.valid(Address) do
+  attribute(:recipient).should_be empty, a(String), have_at_least(3).characters
+
   attribute(:recipient) do
     should_not be_empty
     should be_kind_of(String)
@@ -71,7 +90,7 @@ Frank.valid(Address) do
   end
 end
 
-Frank.valid(Author) do
+Inspector.valid(Author) do
   should have_unique(:email) # custom validation constraint
   attribute(:email).should_not be_empty
   attribute(:email).should be_an_email # custom validation constraint
@@ -114,25 +133,25 @@ Now we can validate any instance of address or author:
 address = Address.new("John Smith", "123 Sesame Street", nil, "Neverland", "NY", "94608")
 author  = Author.new("username@example.com", "John", "Smith", address)
 
-validation_result = Frank.validate(author)
+validation_result = Inspector.validate(author)
 validation_result.valid?.should == true
 ```
 
 The validations above seem a little too verbose, but we can simplify them:
 
 ```ruby
-Frank.valid("medium string entry") do
+Inspector.valid("medium string entry") do
   should be_kind_of(String)
   should have_at_least(3).characters
   should have_at_most(255).characters
 end
 
-Frank.valid("required string entry") do
+Inspector.valid("required string entry") do
   should_not be_empty
   should be_valid("medium string entry")
 end
 
-Frank.valid(Address) do
+Inspector.valid(Address) do
   attribute(:recipient) do
     should be_valid("required string entry")
     should have_only_letters
@@ -168,14 +187,14 @@ Frank.valid(Address) do
   end
 end
 
-Frank.valid("name") do
+Inspector.valid("name") do
   should_not be_empty
   should be_kind_of(String)
   should have_at_least(1).character
   should have_at_most(32).characters
 end
 
-Frank.valid(Author) do
+Inspector.valid(Author) do
   should have_unique(:email) # custom validation constraint
   attribute(:email).should_not be_empty
   attribute(:email).should be_an_email # custom validation constraint
@@ -194,15 +213,15 @@ Frank.valid(Author) do
 end
 ```
 
-The above is nice when you have objects that you want to validate. Sometimes, however, all we have are Array and Hash structures. Frank supports those too:
+The above is nice when you have objects that you want to validate. Sometimes, however, all we have are Array and Hash structures. Inspector supports those too:
 
 ```ruby
-Frank.valid("required string") do
+Inspector.valid("required string") do
   should_not be_empty
   should be_kind_of(String)
 end
 
-Frank.valid("create author request parameters") do
+Inspector.valid("create author request parameters") do
   should have_properties("name", "address")
 
   property("name") do
@@ -259,7 +278,7 @@ params = {
   }
 }
 
-validation_result = Frank.validate(params, :as => "create author request parameters")
+validation_result = Inspector.validate(params, :as => "create author request parameters")
 
 validation_result.valid?.should == true
 ```
@@ -267,7 +286,7 @@ validation_result.valid?.should == true
 And arrays:
 
 ```ruby
-Frank.valid("email addresses") do
+Inspector.valid("email addresses") do
   should have_at_least(3).emails
 
   children do
@@ -279,7 +298,7 @@ end
 
 ## Built-in constraints
 
-Frank ships with some built-in constraints. Most of them are inspired by RSpec's matchers.
+Inspector ships with some built-in constraints. Most of them are inspired by RSpec's matchers.
 
 * be_false     - validate falsiness of a value.
 * be_true      - validate truthyness of a value.
