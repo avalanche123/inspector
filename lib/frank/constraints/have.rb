@@ -11,10 +11,6 @@ module Frank
         def compare(actual)
           actual >= @expected
         end
-
-        def inspect
-          "#<have at least #{@expected.inspect}>"
-        end
       end
 
       class AtMost
@@ -26,10 +22,6 @@ module Frank
 
         def compare(actual)
           actual <= @expected
-        end
-
-        def inspect
-          "#<have at most #{@expected.inspect}>"
         end
       end
 
@@ -43,14 +35,10 @@ module Frank
         def compare(actual)
           actual == @expected
         end
-
-        def inspect
-          "#<have exactly #{@expected.inspect}>"
-        end
       end
 
       def initialize(expected)
-        @expected = expected.to_i
+        @expected        = expected.to_i
       end
 
       def valid?(collection_or_owner)
@@ -58,6 +46,14 @@ module Frank
         return false if collection.nil?
         query_method = determine_query_method(collection)
         compare(collection.__send__(query_method))
+      end
+
+      def inspect
+        "#<%{constraint} %{expected}%{collection}>" % {
+          :constraint => to_s.split('_').join(' '),
+          :expected   => @expected.inspect,
+          :collection => " #{@collection_name}".rstrip
+        }
       end
 
       def method_missing(method, *args, &block)
