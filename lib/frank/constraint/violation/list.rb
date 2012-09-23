@@ -32,11 +32,11 @@ module Frank
             raise "#{violations_list.inspect} is not a Frank::Constraint::Violation::List"
           end
 
-          @children[property_path.to_str] = violations_list
+          @children[property_path.to_s] = violations_list
         end
 
         def [](property_path)
-          child_path, _, property_path = property_path.to_str.split(/(\.|\[|\])/, 2)
+          child_path, _, property_path = property_path.to_s.split(/(\.|\[|\])/, 2)
 
           not_found       = "cannot locate violations for #{property_path}"
           violations_list = @children.fetch(child_path) { raise not_found }

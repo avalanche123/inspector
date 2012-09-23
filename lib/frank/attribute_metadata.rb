@@ -2,18 +2,18 @@ module Frank
   class AttributeMetadata
     include Metadata
 
-    attr_reader :attribute
+    attr_reader :attribute_name
 
-    def initialize(type, attribute)
-      @attribute = attribute
+    def initialize(type, attribute_name)
+      @attribute_name = attribute_name
       super(type)
     end
 
     def attribute_value(object)
-      object.__send__(@attribute)
+      object.__send__(@attribute_name)
     rescue NoMethodError
       raise "metadata for #{@type.inspect} contains attribute metadata, however " +
-            "#{object.inspect}.#{@attribute.inspect} is not defined"
+            "#{object.inspect}.#{@attribute_name.inspect} is not defined"
     end
   end
 end
