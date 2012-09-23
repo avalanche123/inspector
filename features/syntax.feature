@@ -52,7 +52,6 @@ Feature: syntax
       false is not true
       """
 
-  @wip
   Scenario: object attributes
     Given a file named "object.rb" with:
       """

@@ -18,7 +18,7 @@ module Frank
       type       = opts.fetch(:as) { object.class }
       metadata   = @metadata_map[type]
 
-      @walker.walk_object(metadata, object, "")
+      @walker.walk_object(metadata, object)
     end
   end
 end

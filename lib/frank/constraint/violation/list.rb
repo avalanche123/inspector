@@ -2,39 +2,26 @@ module Frank
   module Constraint
     class Violation
       class List
-        extend Forwardable
-        def_delegators :@violations, :each, :map
-
-        attr_reader :property_path, :value
-
-        def initialize(property_path, value, violations = [], children = [])
-          @property_path = property_path
-          @value = value
+        def initialize(violations = [], children = {})
           @violations = violations
           @children = children
         end
 
         def to_s
-          if @property_path.empty?
-            output = ""
-            prefix = ""
-          else
-            output = "#{@property_path}:\n"
-            prefix = "  "
-          end
+          string = ""
 
           unless @violations.empty?
-            output += @violations.map {|v| "#{prefix}#{v.to_s}"}.join("\n")
+            string += @violations.map(&:to_s).join("\n")
+            string += "\n"
           end
 
-          unless @children.empty?
-            @children.each do |list|
-              output += list.to_s.split("\n").map {|l| "#{prefix}#{l.to_s}"}.join("\n")
-              output += "\n"
-            end
+          @children.each do |path, list|
+            string += "#{path}:\n"
+            string += list.to_s.split("\n").map {|line| "  #{line}"}.join("\n")
+            string += "\n"
           end
 
-          output
+          string
         end
 
         def inspect
@@ -53,22 +40,42 @@ module Frank
         end
 
         def length
-          @violations.length + @children.map(&:length).reduce(:+)
+          @violations.length + @children.values.map(&:length).reduce(:+)
         end
 
         def <<(violation)
-          if violation.kind_of?(Frank::Constraint::Violation)
-            @violations << violation
-          elsif violation.kind_of?(Frank::Constraint::Violation::List)
-            @children << violation
-          else
+          unless violation.kind_of?(Frank::Constraint::Violation)
             raise "#{violation.inspect} is not a Frank::Constraint::Violation"
           end
+
+          @violations << violation
         end
         alias :push :<<
 
-        def at(property_path)
-          @children.select {|l| l.property_path == property_path}
+        def []=(property_path, violations_list)
+          unless violations_list.kind_of?(Frank::Constraint::Violation::List)
+            raise "#{violations_list.inspect} is not a Frank::Constraint::Violation::List"
+          end
+
+          @children[property_path] = violations_list
+        end
+
+        def [](property_path)
+          child_path, _, property_path = property_path.split(/(\.|\[|\])/, 2)
+
+          not_found       = "cannot locate violations for #{property_path}"
+          violations_list = @children.fetch(child_path) { raise not_found }
+
+          if property_path
+            violations_list[property_path]
+          else
+            violations_list
+          end
+        end
+
+        def each(*args, &block)
+          @violations.each(*args, &block)
+          @children.values.each { |list| list.each(*args, &block) }
         end
       end
     end

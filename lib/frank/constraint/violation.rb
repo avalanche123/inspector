@@ -5,9 +5,9 @@ module Frank
 
       attr_reader :constraint
 
-      def initialize(positive, constraint)
-        @positive = positive
+      def initialize(constraint, positive)
         @constraint = constraint
+        @positive = positive
       end
 
       def positive?
