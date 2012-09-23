@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Ruby-validation by avalanche123</title>
+    <title>Inspector by avalanche123</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -16,13 +16,13 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1 class="header">Ruby-validation</h1>
+        <h1 class="header">Inspector</h1>
         <p class="header">ruby validation library</p>
 
         <ul>
-          <li class="download"><a class="buttons" href="https://github.com/avalanche123/ruby-validation/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/avalanche123/ruby-validation/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/avalanche123/ruby-validation">View On GitHub</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/avalanche123/inspector/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/avalanche123/inspector/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/avalanche123/inspector">View On GitHub</a></li>
         </ul>
 
         <p class="header">This project is maintained by <a class="header name" href="https://github.com/avalanche123">avalanche123</a></p>
@@ -30,7 +30,7 @@
 
       </header>
       <section>
-        <h1>Frank</h1>
+        <h1>Inspector</h1>
 
 <p>a ruby validation library</p>
 
@@ -40,7 +40,7 @@
 
 <h2>Installing</h2>
 
-<div class="highlight"><pre>gem install frank
+<div class="highlight"><pre>gem install inspector
 </pre></div>
 
 <h2>Quick start</h2>
@@ -53,7 +53,7 @@
 
 <p>To be able to validate them, we need to describe validation rules for those classes:</p>
 
-<div class="highlight"><pre><span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Address</span><span class="p">)</span> <span class="k">do</span>
+<div class="highlight"><pre><span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Address</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">attribute</span><span class="p">(</span><span class="ss">:recipient</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">should_not</span> <span class="n">be_empty</span>
     <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
@@ -100,7 +100,7 @@
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Author</span><span class="p">)</span> <span class="k">do</span>
+<span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Author</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">should</span> <span class="n">have_unique</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span> <span class="c1"># custom validation constraint</span>
   <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_empty</span>
   <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_an_email</span> <span class="c1"># custom validation constraint</span>
@@ -142,24 +142,25 @@
 <div class="highlight"><pre><span class="n">address</span> <span class="o">=</span> <span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"John Smith"</span><span class="p">,</span> <span class="s2">"123 Sesame Street"</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="s2">"Neverland"</span><span class="p">,</span> <span class="s2">"NY"</span><span class="p">,</span> <span class="s2">"94608"</span><span class="p">)</span>
 <span class="n">author</span>  <span class="o">=</span> <span class="no">Author</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"username@example.com"</span><span class="p">,</span> <span class="s2">"John"</span><span class="p">,</span> <span class="s2">"Smith"</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
 
-<span class="n">validation_result</span> <span class="o">=</span> <span class="no">Frank</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
-<span class="n">validation_result</span><span class="o">.</span><span class="n">valid?</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="kp">true</span>
+<span class="n">violations</span> <span class="o">=</span> <span class="no">Inspector</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+
+<span class="n">violations</span><span class="o">.</span><span class="n">empty?</span> <span class="c1"># =&gt; true</span>
 </pre></div>
 
 <p>The validations above seem a little too verbose, but we can simplify them:</p>
 
-<div class="highlight"><pre><span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"medium string entry"</span><span class="p">)</span> <span class="k">do</span>
+<div class="highlight"><pre><span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"medium string entry"</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
   <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
   <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
 <span class="k">end</span>
 
-<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span> <span class="k">do</span>
+<span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">should_not</span> <span class="n">be_empty</span>
   <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"medium string entry"</span><span class="p">)</span>
 <span class="k">end</span>
 
-<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Address</span><span class="p">)</span> <span class="k">do</span>
+<span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Address</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">attribute</span><span class="p">(</span><span class="ss">:recipient</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">should</span> <span class="n">be_valid</span><span class="p">(</span><span class="s2">"required string entry"</span><span class="p">)</span>
     <span class="n">should</span> <span class="n">have_only_letters</span>
@@ -195,14 +196,14 @@
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="k">do</span>
+<span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">should_not</span> <span class="n">be_empty</span>
   <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
   <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">character</span>
   <span class="n">should</span> <span class="n">have_at_most</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">characters</span>
 <span class="k">end</span>
 
-<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Author</span><span class="p">)</span> <span class="k">do</span>
+<span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="no">Author</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">should</span> <span class="n">have_unique</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span> <span class="c1"># custom validation constraint</span>
   <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_empty</span>
   <span class="n">attribute</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_an_email</span> <span class="c1"># custom validation constraint</span>
@@ -221,14 +222,14 @@
 <span class="k">end</span>
 </pre></div>
 
-<p>The above is nice when you have objects that you want to validate. Sometimes, however, all we have are Array and Hash structures. Frank supports those too:</p>
+<p>The above is nice when you have objects that you want to validate. Sometimes, however, all we have are Array and Hash structures. Inspector supports those too:</p>
 
-<div class="highlight"><pre><span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"required string"</span><span class="p">)</span> <span class="k">do</span>
+<div class="highlight"><pre><span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"required string"</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">should_not</span> <span class="n">be_empty</span>
   <span class="n">should</span> <span class="n">be_kind_of</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
 <span class="k">end</span>
 
-<span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"create author request parameters"</span><span class="p">)</span> <span class="k">do</span>
+<span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"create order request parameters"</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">should</span> <span class="n">have_properties</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"address"</span><span class="p">)</span>
 
   <span class="n">property</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="k">do</span>
@@ -273,26 +274,24 @@
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s2">"name"</span> <span class="o">=&gt;</span> <span class="s2">"John Smith"</span><span class="p">,</span>
+<span class="n">violations</span> <span class="o">=</span> <span class="no">Inspector</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span>
+  <span class="s2">"name"</span>    <span class="o">=&gt;</span> <span class="s2">"John Smith"</span><span class="p">,</span>
   <span class="s2">"address"</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="s2">"recipient"</span> <span class="o">=&gt;</span> <span class="s2">"John Smith"</span><span class="p">,</span>
-    <span class="s2">"street"</span> <span class="o">=&gt;</span> <span class="s2">"123 Sesame Street"</span><span class="p">,</span>
-    <span class="s2">"street2"</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
-    <span class="s2">"city"</span> <span class="o">=&gt;</span> <span class="s2">"Neverland"</span><span class="p">,</span>
-    <span class="s2">"state"</span> <span class="o">=&gt;</span> <span class="s2">"NY"</span><span class="p">,</span>
-    <span class="s2">"zip"</span> <span class="o">=&gt;</span> <span class="s2">"94608"</span>
+    <span class="s2">"street"</span>    <span class="o">=&gt;</span> <span class="s2">"123 Sesame Street"</span><span class="p">,</span>
+    <span class="s2">"street2"</span>   <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+    <span class="s2">"city"</span>      <span class="o">=&gt;</span> <span class="s2">"Neverland"</span><span class="p">,</span>
+    <span class="s2">"state"</span>     <span class="o">=&gt;</span> <span class="s2">"NY"</span><span class="p">,</span>
+    <span class="s2">"zip"</span>       <span class="o">=&gt;</span> <span class="s2">"94608"</span>
   <span class="p">}</span>
-<span class="p">}</span>
+<span class="p">},</span> <span class="ss">:as</span> <span class="o">=&gt;</span> <span class="s2">"create author request parameters"</span><span class="p">)</span>
 
-<span class="n">validation_result</span> <span class="o">=</span> <span class="no">Frank</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="ss">:as</span> <span class="o">=&gt;</span> <span class="s2">"create author request parameters"</span><span class="p">)</span>
-
-<span class="n">validation_result</span><span class="o">.</span><span class="n">valid?</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="kp">true</span>
+<span class="n">violations</span><span class="o">.</span><span class="n">empty?</span> <span class="c1"># =&gt; true</span>
 </pre></div>
 
 <p>And arrays:</p>
 
-<div class="highlight"><pre><span class="no">Frank</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"email addresses"</span><span class="p">)</span> <span class="k">do</span>
+<div class="highlight"><pre><span class="no">Inspector</span><span class="o">.</span><span class="n">valid</span><span class="p">(</span><span class="s2">"email addresses"</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">should</span> <span class="n">have_at_least</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">emails</span>
 
   <span class="n">children</span> <span class="k">do</span>
@@ -300,16 +299,21 @@
     <span class="n">should</span> <span class="n">be_an_email</span>
   <span class="k">end</span>
 <span class="k">end</span>
+
+<span class="n">violations</span> <span class="o">=</span> <span class="no">Inspector</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="o">[</span><span class="s2">"username@example.com"</span><span class="p">,</span> <span class="s2">"not a valid email"</span><span class="o">]</span><span class="p">)</span>
+
+<span class="n">violations</span><span class="o">.</span><span class="n">empty?</span> <span class="c1"># =&gt; false</span>
 </pre></div>
 
 <h2>Built-in constraints</h2>
 
-<p>Frank ships with some built-in constraints. Most of them are inspired by RSpec's matchers.</p>
+<p>Inspector ships with some built-in constraints. Most of them are inspired by RSpec's matchers.</p>
 
 <ul>
-<li>be_false     - validate falsiness of a value.</li>
-<li>be_true      - validate truthyness of a value.</li>
-<li>be_valid(type) - validate an object as a valid type (defaults to its class).</li>
+<li>be_false             - validate falsiness of a value.</li>
+<li>be_true              - validate truthyness of a value.</li>
+<li>be_valid(type)       - validate an object as a valid type (defaults to its class).</li>
+<li>be_email/be_an_email - validate value as email</li>
 </ul>
       </section>
       <footer>
