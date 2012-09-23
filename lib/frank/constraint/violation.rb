@@ -25,7 +25,10 @@ module Frank
       end
 
       def inspect
-        "#<violation constraint=#{@constraint.inspect}, positive=#{@positive.inspect}>"
+        "#<violated %{type} constraint %{constraint}>" % {
+          :type       => @positive ? 'positive' : 'negative',
+          :constraint => @constraint.inspect
+        }
       end
     end
   end
