@@ -24,26 +24,7 @@ Author  = Struct.new(:email, :first_name, :last_name, :address)
 To be able to validate them, we need to describe validation rules for those classes:
 
 ```ruby
-valid address
-  has attributes: recipient, street, street2, city, state
-
-  recipient:
-    not empty
-    is a string
-    has between 3 and 255 characters
-    has only letters
-
-  street:
-
-
-{
-  'name' => ''
-}    
-
-
 Inspector.valid(Address) do
-  attribute(:recipient).should_be empty, a(String), have_at_least(3).characters
-
   attribute(:recipient) do
     should_not be_empty
     should be_kind_of(String)
@@ -133,8 +114,9 @@ Now we can validate any instance of address or author:
 address = Address.new("John Smith", "123 Sesame Street", nil, "Neverland", "NY", "94608")
 author  = Author.new("username@example.com", "John", "Smith", address)
 
-validation_result = Inspector.validate(author)
-validation_result.valid?.should == true
+violations = Inspector.validate(author)
+
+violations.empty? # => true
 ```
 
 The validations above seem a little too verbose, but we can simplify them:
@@ -221,7 +203,7 @@ Inspector.valid("required string") do
   should be_kind_of(String)
 end
 
-Inspector.valid("create author request parameters") do
+Inspector.valid("create order request parameters") do
   should have_properties("name", "address")
 
   property("name") do
@@ -266,21 +248,19 @@ Inspector.valid("create author request parameters") do
   end
 end
 
-params = {
-  "name" => "John Smith",
+violations = Inspector.validate({
+  "name"    => "John Smith",
   "address" => {
     "recipient" => "John Smith",
-    "street" => "123 Sesame Street",
-    "street2" => nil,
-    "city" => "Neverland",
-    "state" => "NY",
-    "zip" => "94608"
+    "street"    => "123 Sesame Street",
+    "street2"   => nil,
+    "city"      => "Neverland",
+    "state"     => "NY",
+    "zip"       => "94608"
   }
-}
+}, :as => "create author request parameters")
 
-validation_result = Inspector.validate(params, :as => "create author request parameters")
-
-validation_result.valid?.should == true
+violations.empty? # => true
 ```
 
 And arrays:
@@ -294,13 +274,17 @@ Inspector.valid("email addresses") do
     should be_an_email
   end
 end
+
+violations = Inspector.validate(["username@example.com", "not a valid email"])
+
+violations.empty? # => false
 ```
 
 ## Built-in constraints
 
 Inspector ships with some built-in constraints. Most of them are inspired by RSpec's matchers.
 
-* be_false     - validate falsiness of a value.
-* be_true      - validate truthyness of a value.
-* be_valid(type) - validate an object as a valid type (defaults to its class).
-
+* be_false             - validate falsiness of a value.
+* be_true              - validate truthyness of a value.
+* be_valid(type)       - validate an object as a valid type (defaults to its class).
+* be_email/be_an_email - validate value as email
