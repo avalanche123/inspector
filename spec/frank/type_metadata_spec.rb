@@ -10,15 +10,9 @@ describe(Frank::TypeMetadata) do
     end
   end
 
-  describe "#positive_constraints" do
+  describe "#constraints" do
     it "are empty" do
-      expect(metadata.positive_constraints).to be_empty
-    end
-  end
-
-  describe "#negative_constraints" do
-    it "are empty" do
-      expect(metadata.negative_constraints).to be_empty
+      expect(metadata.constraints).to be_empty
     end
   end
 

@@ -2,15 +2,13 @@ require 'spec_helper'
 
 describe(Frank::Validator) do
   let(:metadata_map) { double() }
+  let(:walker) { double() }
   let(:type_metadata_class) { double() }
-  let(:violation_list_class) { double() }
-  let(:walker_class) { double() }
   let(:validator) {
     Frank::Validator.new(
       metadata_map,
-      type_metadata_class,
-      violation_list_class,
-      walker_class
+      walker,
+      type_metadata_class
     )
   }
 
@@ -44,27 +42,24 @@ describe(Frank::Validator) do
 
   describe "#validate" do
     let(:metadata) { double() }
-    let(:violation_list) { double() }
-    let(:walker) { double() }
+    let(:violations) { double() }
     let(:object) { double() }
 
     before(:each) do
-      violation_list_class.stub(:new) { violation_list }
-      walker_class.should_receive(:new).with(violation_list).and_return(walker)
-      walker.should_receive(:walk_object).with(metadata, object, "")
+      walker.should_receive(:walk_object).with(metadata, object).and_return(violations)
     end
 
     it "walks object using its class" do
       object.stub(:class) { NilClass }
       metadata_map.should_receive(:[]).with(NilClass).and_return(metadata)
 
-      expect(validator.validate(object)).to be(violation_list)
+      expect(validator.validate(object)).to be(violations)
     end
 
     it "walks object using metadata type specified" do
       metadata_map.should_receive(:[]).with("metadata type").and_return(metadata)
 
-      expect(validator.validate(object, :as => "metadata type")).to be(violation_list)
+      expect(validator.validate(object, :as => "metadata type")).to be(violations)
     end
   end
 end
