@@ -5,7 +5,7 @@ module Inspector
     attr_reader :attribute_name
 
     def initialize(type, attribute_name)
-      @attribute_name = attribute_name
+      @attribute_name = attribute_name.to_sym
       super(type)
     end
 
