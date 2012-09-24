@@ -10,7 +10,7 @@ module Inspector
       end
 
       def valid?(actual)
-        result = true
+        result = false
 
         begin
           result = actual.__send__("#{@method}?", *@args, &@block)
