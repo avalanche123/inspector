@@ -247,7 +247,7 @@ attribute(:attribute) do
 end
 ```
 
-#### `have/have_exactly`
+#### `have`/`have_exactly`
 
 validate collection length.
 
