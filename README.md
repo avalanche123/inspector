@@ -74,7 +74,6 @@ Above code will result in the following:
 
     invalid post #<struct Post title=123, body=nil, author=#<struct Author email="not an email", first_name="John", last_name="Smith">>:
       title:
-        should_not.be_empty
         should.be_kind_of
       body:
         should_not.be_empty
@@ -124,7 +123,6 @@ puts violations unless violations.empty?
 The code above will result in the following:
 
     [title]:
-      should_not.be_empty
       should.be_kind_of
     [body]:
       should_not.be_empty
