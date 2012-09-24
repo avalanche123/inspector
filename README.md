@@ -2,6 +2,12 @@
 
 a ruby validation library
 
+## Installation
+
+```shell
+gem install object-inspector
+```
+
 ## Background
 
 We often need to validate data. And a lot of the time we're forced to put those validation rules on our so-called models. I think this is making too many assumptions about the styles of applications that we're writing and doesn't give us enough flexibility to implement something outside of this box.

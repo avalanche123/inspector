@@ -1,7 +1,7 @@
 require File.expand_path("../lib/inspector/version", __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.name          = "inspector"
+  gem.name          = "object-inspector"
   gem.version       = Inspector::VERSION
   gem.license       = 'MIT'
   gem.authors       = ["Bulat Shakirzyanov"]
