@@ -157,7 +157,6 @@ Feature: syntax
       """
       invalid post #<struct Post title=123, body=nil, author=#<struct Author email="not an email", first_name="John", last_name="Smith">>:
         title:
-          should_not.be_empty
           should.be_kind_of
         body:
           should_not.be_empty
@@ -198,7 +197,6 @@ Feature: syntax
     Then the output should contain:
       """
       [title]:
-        should_not.be_empty
         should.be_kind_of
       [body]:
         should_not.be_empty
