@@ -21,7 +21,7 @@ describe(Inspector::Validator) do
     end
 
     it "registers new TypeMetadata in metadata map" do
-      expect(validator.valid(NilClass)).to be(metadata)
+      expect(validator.valid(NilClass)).to be(nil)
     end
 
     it "yields registered TypeMetadata" do

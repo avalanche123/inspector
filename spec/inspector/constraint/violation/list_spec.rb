@@ -33,8 +33,8 @@ describe(Inspector::Constraint::Violation::List) do
   describe "#[]" do
     before(:each) do
       list["attribute"] = Inspector::Constraint::Violation::List.new([
-        Inspector::Constraint::Violation.new(nil, true),
-        Inspector::Constraint::Violation.new(nil, false)
+        Inspector::Constraint::Violation.new(nil),
+        Inspector::Constraint::Violation.new(nil)
       ])
     end
 

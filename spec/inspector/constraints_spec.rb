@@ -9,7 +9,7 @@ describe(Inspector::Constraints) do
 
   describe ".be_false" do
     it "creates False constraint" do
-      expect(constraint_helper.be_false).to be(Inspector::Constraints::False)
+      expect(constraint_helper.be_false).to be_kind_of(Inspector::Constraints::False)
     end
   end
 end

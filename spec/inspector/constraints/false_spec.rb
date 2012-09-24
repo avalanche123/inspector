@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Inspector::Constraints::False do
-  let(:constraint) { Inspector::Constraints::False }
+  let(:constraint) { Inspector::Constraints::False.new }
 
   [
     [true, false],
