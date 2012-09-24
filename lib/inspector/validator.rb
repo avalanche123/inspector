@@ -12,6 +12,8 @@ module Inspector
         block.arity == 1 ? yield(metadata) : metadata.instance_eval(&block)
       end
       @metadata_map[type] = metadata
+
+      nil
     end
 
     def validate(object, opts = {})
