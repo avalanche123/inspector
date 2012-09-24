@@ -72,19 +72,17 @@ end
 
 Above code will result in the following:
 
-```shell
-invalid post #<struct Post title=123, body=nil, author=#<struct Author email="not an email", first_name="John", last_name="Smith">>:
-  title:
-    should_not.be_empty
-    should.be_kind_of
-  body:
-    should_not.be_empty
-    should.be_kind_of
-    should.have_at_least
-  author:
-    email:
-      should.be_an_email
-```
+    invalid post #<struct Post title=123, body=nil, author=#<struct Author email="not an email", first_name="John", last_name="Smith">>:
+      title:
+        should_not.be_empty
+        should.be_kind_of
+      body:
+        should_not.be_empty
+        should.be_kind_of
+        should.have_at_least
+      author:
+        email:
+          should.be_an_email
 
 The above example is fairly simplistic, yet demonstrates several important features:
 
@@ -125,15 +123,13 @@ puts violations unless violations.empty?
 
 The code above will result in the following:
 
-```shell
-[title]:
-  should_not.be_empty
-  should.be_kind_of
-[body]:
-  should_not.be_empty
-  should.be_kind_of
-  should.have_at_least
-```
+    [title]:
+      should_not.be_empty
+      should.be_kind_of
+    [body]:
+      should_not.be_empty
+      should.be_kind_of
+      should.have_at_least
 
 ### Validating arrays
 
@@ -147,10 +143,10 @@ end
 puts Inspector.validate(["not an email", "username@example.com"], :as => "emails")
 ```
 
-```shell
-[0]:
-  should.be_an_email
-```
+Above code produces:
+
+    [0]:
+      should.be_an_email
 
 ### DRYing validations
 
