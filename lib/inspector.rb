@@ -15,9 +15,13 @@ module Inspector
     def_delegators :@validator, :validate, :valid
   end
 
-  @validator = Validator.new(
+  @validators_map = {}
+  @validator      = Validator.new(
     Metadata::Map.new,
-    Metadata::Walker.new(Constraint::Violation::List, Constraint::Violation),
+    Metadata::Walker.new(Constraint::Violation::List, @validators_map),
     TypeMetadata
   )
+
+  @validators_map[:simple]   = Constraint::Validators::Simple.new
+  @validators_map[:validity] = Constraint::Validators::Validity.new(@validator)
 end

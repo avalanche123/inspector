@@ -2,6 +2,8 @@ module Inspector
   module Constraint
     class Violation
       class List
+        attr_reader :violations, :children
+
         def initialize(violations = [], children = {})
           @violations = violations
           @children = children
@@ -48,9 +50,16 @@ module Inspector
           end
         end
 
-        def each(*args, &block)
-          @violations.each(*args, &block)
-          @children.values.each { |list| list.each(*args, &block) }
+        def each(path = "", &block)
+          @violations.each do |violation|
+            yield(path, violation)
+          end
+
+          @children.each do |sub_path, list|
+            prefix = "." unless path.empty? || sub_path.start_with?("[")
+
+            list.each("#{path}#{prefix}#{sub_path}", &block)
+          end
         end
 
         def to_s
@@ -62,9 +71,11 @@ module Inspector
           end
 
           @children.each do |path, list|
-            string += "#{path}:\n"
-            string += list.to_s.split("\n").map {|line| "  #{line}"}.join("\n")
-            string += "\n"
+            unless list.empty?
+              string += "#{path}:\n"
+              string += list.to_s.split("\n").map {|line| "  #{line}"}.join("\n")
+              string += "\n"
+            end
           end
 
           string

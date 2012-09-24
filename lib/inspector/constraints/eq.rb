@@ -1,5 +1,7 @@
 module Inspector
   module Constraints
+    include Constraint
+
     class Eq
       def initialize(expected)
         @expected = expected

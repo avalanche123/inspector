@@ -1,6 +1,8 @@
 module Inspector
   module Constraints
     class Predicate
+      include Constraint
+
       def initialize(method, *args, &block)
         @method = method
         @args = args
@@ -8,10 +10,20 @@ module Inspector
       end
 
       def valid?(actual)
-        actual.__send__("#{@method}?", *@args, &@block)
-      rescue NameError
-        @method = "#{@method}s"
-        actual.__send__("#{@method}?", *@args, &@block)
+        result = true
+
+        begin
+          result = actual.__send__("#{@method}?", *@args, &@block)
+        rescue NameError
+        end
+
+        begin
+          result  = actual.__send__("#{@method}s?", *@args, &@block)
+          @method = "#{@method}s"
+        rescue NameError
+        end
+
+        return result
       end
 
       def to_s

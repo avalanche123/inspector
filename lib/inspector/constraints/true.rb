@@ -1,17 +1,19 @@
 module Inspector
   module Constraints
-    True = Object.new
+    class True
+      include Constraint
 
-    def True.valid?(actual)
-      !!actual
-    end
+      def valid?(actual)
+        !!actual
+      end
 
-    def True.to_s
-      "be_true"
-    end
+      def to_s
+        "be_true"
+      end
 
-    def True.inspect
-      "#<true>"
+      def inspect
+        "#<true>"
+      end
     end
   end
 end

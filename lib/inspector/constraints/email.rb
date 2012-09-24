@@ -1,6 +1,8 @@
 module Inspector
   module Constraints
-    module Email
+    class Email
+      include Constraint
+
       PATTERN = begin
         if (RUBY_VERSION == '1.9.2' && RUBY_ENGINE == 'jruby' && JRUBY_VERSION <= '1.6.3') || RUBY_VERSION >= '1.9.2'
           # There is an obscure bug in jruby 1.6 that prevents matching
@@ -39,15 +41,15 @@ module Inspector
         pattern        = /\A#{addr_spec}\z/u
       end
 
-      def self.valid?(email)
+      def valid?(email)
         !(PATTERN =~ email).nil?
       end
 
-      def self.to_s
+      def to_s
         "be_an_email"
       end
 
-      def self.inspect
+      def inspect
         "#<email>"
       end
     end

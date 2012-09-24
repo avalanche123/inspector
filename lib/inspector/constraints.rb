@@ -7,35 +7,40 @@ module Inspector
     autoload :Have,        'inspector/constraints/have'
     autoload :Email,       'inspector/constraints/email'
     autoload :Eq,          'inspector/constraints/eq'
+    autoload :Valid,       'inspector/constraints/valid'
 
     def be_false
-      Inspector::Constraints::False
+      False
     end
 
     def be_true
-      Inspector::Constraints::True
+      True
     end
 
     def have_at_least(n)
-      Inspector::Constraints::Have::AtLeast.new(n)
+      Have::AtLeast.new(n)
     end
 
     def have_at_most(n)
-      Inspector::Constraints::Have::AtMost.new(n)
+      Have::AtMost.new(n)
     end
 
     def have(n)
-      Inspector::Constraints::Have::Exactly.new(n)
+      Have::Exactly.new(n)
     end
     alias :have_exactly :have
 
     def be_email
-      Inspector::Constraints::Email
+      Email.new
     end
     alias :be_an_email :be_email
 
     def eq(expected)
-      Inspector::Constraints::Eq.new(expected)
+      Eq.new(expected)
+    end
+
+    def validate(options = {})
+      Valid.new(options[:as])
     end
 
     # be_empty => value.empty?

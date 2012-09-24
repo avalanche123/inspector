@@ -43,7 +43,7 @@ module Inspector
     def should(constraint = nil)
       return PositiveComparator.new(self) if constraint.nil?
 
-      @constraints << [true, constraint]
+      @constraints << constraint
 
       self
     end
@@ -51,7 +51,8 @@ module Inspector
     def should_not(constraint = nil)
       return NegativeComparator.new(self) if constraint.nil?
 
-      @constraints << [false, constraint]
+      constraint.negate!
+      @constraints << constraint
 
       self
     end

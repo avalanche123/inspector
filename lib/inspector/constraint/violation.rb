@@ -5,28 +5,27 @@ module Inspector
 
       attr_reader :constraint
 
-      def initialize(constraint, positive)
+      def initialize(constraint)
         @constraint = constraint
-        @positive = positive
       end
 
       def positive?
-        @positive
+        @constraint.positive?
       end
 
       def negative?
-        !@positive
+        !@constraint.positive?
       end
 
       def to_s
-        expectation = @positive ? 'should' : 'should_not'
+        expectation = @constraint.positive? ? 'should' : 'should_not'
 
         "#{expectation}.#{@constraint}"
       end
 
       def inspect
         "#<violated %{type} constraint %{constraint}>" % {
-          :type       => @positive ? 'positive' : 'negative',
+          :type       => @constraint.positive? ? 'positive' : 'negative',
           :constraint => @constraint.inspect
         }
       end

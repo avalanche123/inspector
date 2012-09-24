@@ -1,17 +1,19 @@
 module Inspector
   module Constraints
-    False = Object.new
+    class False
+      include Constraint
 
-    def False.valid?(actual)
-      !actual
-    end
+      def valid?(actual)
+        !actual
+      end
 
-    def False.to_s
-      "be_false"
-    end
+      def to_s
+        "be_false"
+      end
 
-    def False.inspect
-      "#<false>"
+      def inspect
+        "#<false>"
+      end
     end
   end
 end

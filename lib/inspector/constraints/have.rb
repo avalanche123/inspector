@@ -1,6 +1,8 @@
 module Inspector
   module Constraints
     module Have
+      include Constraint
+
       class AtLeast
         include Have
 

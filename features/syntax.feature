@@ -94,3 +94,76 @@ Feature: syntax
         email:
           should.be_an_email
       """
+
+  Scenario: nested objects
+    Given a file named "post_and_author.rb" with:
+      """
+      require 'inspector'
+
+      Post   = Struct.new(:title, :body, :author)
+      Author = Struct.new(:email, :first_name, :last_name)
+
+      Inspector.valid(Post) do
+        attribute(:title) do
+          should_not be_empty
+          should be_kind_of(String)
+          should have_at_least(3).characters
+        end
+
+        attribute(:body) do
+          should_not be_empty
+          should be_kind_of(String)
+          should have_at_least(3).characters
+        end
+
+        attribute(:author).should validate(:as => Author)
+      end
+
+      Inspector.valid(Author) do
+        attribute(:email) do
+          should_not be_empty
+          should be_an_email
+        end
+
+        attribute(:first_name) do
+          should_not be_empty
+          should be_kind_of(String)
+          should have_at_least(1).character
+          should have_at_most(32).characters
+        end
+
+        attribute(:last_name) do
+          should_not be_empty
+          should be_kind_of(String)
+          should have_at_least(1).character
+          should have_at_most(32).characters
+        end
+      end
+
+      author = Author.new("not an email", "John", "Smith")
+      post   = Post.new(123, nil, author)
+
+      violations = Inspector.validate(post)
+
+      if violations.empty?
+        puts "post #{post.inspect} is valid"
+      else
+        puts "invalid post #{post.inspect}:"
+        puts violations.to_s.split("\n").map { |line| "  #{line}" }.join("\n")
+      end
+      """
+    When I run `ruby post_and_author.rb`
+    Then the output should contain:
+      """
+      invalid post #<struct Post title=123, body=nil, author=#<struct Author email="not an email", first_name="John", last_name="Smith">>:
+        title:
+          should_not.be_empty
+          should.be_kind_of
+        body:
+          should_not.be_empty
+          should.be_kind_of
+          should.have_at_least
+        author:
+          email:
+            should.be_an_email
+      """
