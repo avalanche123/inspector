@@ -3,6 +3,7 @@ module Inspector
     autoload :Base,        'inspector/constraints/base'
     autoload :False,       'inspector/constraints/false'
     autoload :True,        'inspector/constraints/true'
+    autoload :Empty,       'inspector/constraints/empty'
     autoload :Predicate,   'inspector/constraints/predicate'
     autoload :Have,        'inspector/constraints/have'
     autoload :Email,       'inspector/constraints/email'
@@ -15,6 +16,10 @@ module Inspector
 
     def be_true
       True.new
+    end
+
+    def be_empty
+      Empty.new
     end
 
     def have_at_least(n)
