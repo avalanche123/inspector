@@ -10,11 +10,11 @@ module Inspector
     autoload :Valid,       'inspector/constraints/valid'
 
     def be_false
-      False
+      False.new
     end
 
     def be_true
-      True
+      True.new
     end
 
     def have_at_least(n)

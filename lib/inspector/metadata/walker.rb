@@ -35,7 +35,7 @@ module Inspector
           metadata.children_metadata.children(object) do |child, index|
             path = "[#{index}]"
 
-            violations[path] = walk_object(metadata.children_metadata, child, path)
+            violations[path] = walk_object(metadata.children_metadata, child)
           end unless metadata.children_metadata.nil?
         end
 

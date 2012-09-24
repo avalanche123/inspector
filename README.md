@@ -2,84 +2,44 @@
 
 a ruby validation library
 
-## Disclaimer
+## Background
 
-This is a work in progress. Documented features are not yet implemented, this documentation is to describe what will be implemented.
+We often need to validate data. And a lot of the time we're forced to put those validation rules on our so-called models. I think this is making too many assumptions about the styles of applications that we're writing and doesn't give us enough flexibility to implement something outside of this box.
 
-## Installing
+Validating models is great, sure. Very often I find myself needing to validate hashes or arrays, before I even hydrate that data on my models. Other times, I don't have the luxury of using a traditional ORM - maybe I store my data in XML files or maybe I don't even store it anywhere at all.
 
-```shell
-gem install inspector
-```
+Inspector is designed to avoid those assumptions and give the developer flexibility and power of object validation dressed in a nice DSL. The actual validations definition syntax takes inspiration from RSpec's powerful matchers. And with nested validations your validation rules are guaranteed to be ever so concise and readable.
+
+Read through quick start to get basic idea of what I'm talking about.
 
 ## Quick start
 
-Let's say we have the following classes:
-
 ```ruby
-Address = Struct.new(:recipient, :street, :street2, :city, :state, :zip)
-Author  = Struct.new(:email, :first_name, :last_name, :address)
-```
+require 'inspector'
 
-To be able to validate them, we need to describe validation rules for those classes:
+Post   = Struct.new(:title, :body, :author)
+Author = Struct.new(:email, :first_name, :last_name)
 
-```ruby
-Inspector.valid(Address) do
-  attribute(:recipient) do
+Inspector.valid(Post) do
+  attribute(:title) do
     should_not be_empty
     should be_kind_of(String)
     should have_at_least(3).characters
-    should have_at_most(255).characters
-    should have_only_letters
   end
 
-  attribute(:street) do
+  attribute(:body) do
     should_not be_empty
     should be_kind_of(String)
     should have_at_least(3).characters
-    should have_at_most(255).characters
-    should have_only_letters_and_numbers # custom validation constraint
   end
 
-  attribute(:street2) do # optional
-    should be_kind_of(String)
-    should have_at_least(3).characters
-    should have_at_most(255).characters
-    should have_only_letters_and_numbers
-  end
-
-  attribute(:city) do
-    should_not be_empty
-    should be_kind_of(String)
-    should have_at_least(3).characters
-    should have_at_most(255).characters
-    should have_only_letters # custom validation constraint
-  end
-
-  attribute(:state) do
-    should_not be_empty
-    should be_kind_of(String)
-    should have_at_exactly(2).characters
-    should have_only_uppercase_letters # custom validation constraint
-  end
-
-  attribute(:zip) do
-    should_not be_empty
-    should be_kind_of(String)
-    should have_exactly_most(5).characters
-    should have_only_numbers # custom validation constraint
-  end
+  attribute(:author).should validate(:as => Author)
 end
 
 Inspector.valid(Author) do
-  should have_unique(:email) # custom validation constraint
-  attribute(:email).should_not be_empty
-  attribute(:email).should be_an_email # custom validation constraint
-  # or
   attribute(:email) do
     should_not be_empty
-    should be_unique # custom validation constraint
-    should be_an_email # custom validation constraint
+    should be_an_email
   end
 
   attribute(:first_name) do
@@ -87,12 +47,6 @@ Inspector.valid(Author) do
     should be_kind_of(String)
     should have_at_least(1).character
     should have_at_most(32).characters
-    # or
-    # attribute(:length) do
-    #   should be >= 4
-    #   should be <= 5
-    # end
-    # has different validation semantics
   end
 
   attribute(:last_name) do
@@ -101,190 +55,281 @@ Inspector.valid(Author) do
     should have_at_least(1).character
     should have_at_most(32).characters
   end
+end
 
-  attribute(:address).should be_valid
-  # or
-  attribute(:address).should be_valid(Address)
+author = Author.new("not an email", "John", "Smith")
+post   = Post.new(123, nil, author)
+
+violations = Inspector.validate(post)
+
+if violations.empty?
+  puts "post #{post.inspect} is valid"
+else
+  puts "invalid post #{post.inspect}:"
+  puts violations.to_s.split("\n").map { |line| "  #{line}" }.join("\n")
 end
 ```
 
-Now we can validate any instance of address or author:
+Above code will result in the following:
+
+```shell
+invalid post #<struct Post title=123, body=nil, author=#<struct Author email="not an email", first_name="John", last_name="Smith">>:
+  title:
+    should_not.be_empty
+    should.be_kind_of
+  body:
+    should_not.be_empty
+    should.be_kind_of
+    should.have_at_least
+  author:
+    email:
+      should.be_an_email
+```
+
+The above example is fairly simplistic, yet demonstrates several important features:
+
+* Validation constraints can be negated (the use of should_not enforces this)
+* It is possible to nest validations (`author` attribute in `Post` validation rules)
+* Validations are not tied to error messages
+
+## Usage
+
+The quick start above highlighted basic usage scenario. However, this is definitely not everything Inspector can do.
+
+### Validating hashes
 
 ```ruby
-address = Address.new("John Smith", "123 Sesame Street", nil, "Neverland", "NY", "94608")
-author  = Author.new("username@example.com", "John", "Smith", address)
+require 'inspector'
 
-violations = Inspector.validate(author)
+Inspector.valid("request parameters") do
+  property("title") do
+    should_not be_empty
+    should be_kind_of(String)
+    should have_at_least(3).characters
+  end
 
-violations.empty? # => true
+  property("body") do
+    should_not be_empty
+    should be_kind_of(String)
+    should have_at_least(3).characters
+  end
+end
+
+violations = Inspector.validate({
+  "title" => 123,
+  "body"  => nil
+}, :as => "requests parameters")
+
+puts violations unless violations.empty?
 ```
+
+The code above will result in the following:
+
+```shell
+[title]:
+  should_not.be_empty
+  should.be_kind_of
+[body]:
+  should_not.be_empty
+  should.be_kind_of
+  should.have_at_least
+```
+
+### Validating arrays
+
+```ruby
+require 'inspector'
+
+Inspector.valid("emails") do
+  each_item.should be_an_email
+end
+
+puts Inspector.validate(["not an email", "username@example.com"], :as => "emails")
+```
+
+```shell
+[0]:
+  should.be_an_email
+```
+
+### DRYing validations
+
+Sometimes we end up with almost exactly same validations on different attributes or properties. It is quite easy to remove the duplication by using `validate` constraint:
+
 
 The validations above seem a little too verbose, but we can simplify them:
 
 ```ruby
-Inspector.valid("medium string entry") do
+require 'inspector'
+
+Post   = Struct.new(:title, :body, :author)
+Author = Struct.new(:email, :first_name, :last_name)
+
+Inspector.valid("required string") do
+  should_not be_empty
   should be_kind_of(String)
   should have_at_least(3).characters
-  should have_at_most(255).characters
 end
 
-Inspector.valid("required string entry") do
-  should_not be_empty
-  should be_valid("medium string entry")
-end
-
-Inspector.valid(Address) do
-  attribute(:recipient) do
-    should be_valid("required string entry")
-    should have_only_letters
-  end
-
-  attribute(:street) do
-    should be_valid("required string entry")
-    should have_only_letters_and_numbers # custom validation constraint
-  end
-
-  attribute(:street2) do # street2 is optional
-    should be_valid("medium string entry")
-    should have_only_letters_and_numbers
-  end
-
-  attribute(:city) do
-    should be_valid("required string entry")
-    should have_only_letters # custom validation constraint
-  end
-
-  attribute(:state) do
-    should_not be_empty
-    should be_kind_of(String)
-    should have_at_exactly(2).characters
-    should have_only_uppercase_letters # custom validation constraint
-  end
-
-  attribute(:zip) do
-    should_not be_empty
-    should be_kind_of(String)
-    should have_exactly_most(5).characters
-    should have_only_numbers # custom validation constraint
-  end
-end
-
-Inspector.valid("name") do
+Inspector.valid("required short string") do
   should_not be_empty
   should be_kind_of(String)
   should have_at_least(1).character
   should have_at_most(32).characters
 end
 
+Inspector.valid(Post) do
+  attribute(:title).should  validate :as => "required string"
+  attribute(:body).should   validate :as => "required string"
+  attribute(:author).should validate :as => Author
+end
+
 Inspector.valid(Author) do
-  should have_unique(:email) # custom validation constraint
-  attribute(:email).should_not be_empty
-  attribute(:email).should be_an_email # custom validation constraint
-  # or
   attribute(:email) do
-    should_not be_empty
-    should be_unique # custom validation constraint
-    should be_an_email # custom validation constraint
-  end
-
-  attribute(:first_name).should be_valid("name")
-
-  attribute(:last_name).should be_valid("name")
-
-  attribute(:address).should be_valid
-end
-```
-
-The above is nice when you have objects that you want to validate. Sometimes, however, all we have are Array and Hash structures. Inspector supports those too:
-
-```ruby
-Inspector.valid("required string") do
-  should_not be_empty
-  should be_kind_of(String)
-end
-
-Inspector.valid("create order request parameters") do
-  should have_properties("name", "address")
-
-  property("name") do
-    should be_valid("required string entry")
-    should have_only_letters_and_numbers
-  end
-
-  property("address") do
-    should have_properties("recipient", "street", "street2", "city", "state", "zip")
-
-    property("recipient") do
-      should be_valid("required string entry")
-      should have_only_letters
-    end
-
-    property("street") do
-      should be_valid("required string entry")
-      should have_only_letters_and_numbers
-    end
-
-    property("street2") do
-      should be_valid("medium string entry")
-      should have_only_letters_and_numbers
-    end
-
-    property("city") do
-      should be_valid("required string entry")
-      should have_only_letters_and_numbers
-    end
-
-    property("state") do
-      should be_valid("required string")
-      should have_at_exactly(2).characters
-      should have_only_uppercase_letters # custom validation constraint
-    end
-
-    property("zip") do
-      should be_valid("required string")
-      should have_exactly_most(5).characters
-      should have_at_most(5).characters
-    end
-  end
-end
-
-violations = Inspector.validate({
-  "name"    => "John Smith",
-  "address" => {
-    "recipient" => "John Smith",
-    "street"    => "123 Sesame Street",
-    "street2"   => nil,
-    "city"      => "Neverland",
-    "state"     => "NY",
-    "zip"       => "94608"
-  }
-}, :as => "create author request parameters")
-
-violations.empty? # => true
-```
-
-And arrays:
-
-```ruby
-Inspector.valid("email addresses") do
-  should have_at_least(3).emails
-
-  children do
     should_not be_empty
     should be_an_email
   end
+
+  attribute(:first_name).should validate :as => "required short string"
+  attribute(:last_name).should  validate :as => "required short string"
 end
-
-violations = Inspector.validate(["username@example.com", "not a valid email"])
-
-violations.empty? # => false
 ```
 
-## Built-in constraints
+### Built-in constraints
 
 Inspector ships with some built-in constraints. Most of them are inspired by RSpec's matchers.
 
-* be_false             - validate falsiness of a value.
-* be_true              - validate truthyness of a value.
-* be_valid(type)       - validate an object as a valid type (defaults to its class).
-* be_email/be_an_email - validate value as email
+#### `be_false`
+
+validate falsiness of a value.
+
+```ruby
+attribute(:attribute) do
+  should be_false
+end
+```
+
+#### `be_true`
+
+validate truthyness of a value.
+
+```ruby
+attribute(:attribute) do
+  should be_true
+end
+```
+
+#### `validate`
+
+validate an object as a valid type (defaults to its class):
+
+```ruby
+attribute(:attribute) do
+  should validate
+end
+```
+
+```ruby
+attribute(:attribute) do
+  should validate(:as => 'validation metadata')
+end
+```
+
+#### `be_email`/`be_an_email`
+
+validate value as email.
+
+```ruby
+attribute(:attribute) do
+  should be_email
+end
+```
+
+```ruby
+attribute(:attribute) do
+  should be_an_email
+end
+```
+
+#### `have/have_exactly`
+
+validate collection length.
+
+```ruby
+attribute(:attribute) do
+  should have(5).characters
+end
+```
+
+```ruby
+attribute(:attribute) do
+  should have_exactly(5).characters
+end
+```
+
+#### `have_at_least`
+
+validate collection minimum length.
+
+```ruby
+attribute(:attribute) do
+  should have_at_least(5).characters
+end
+```
+
+#### `have_at_most`
+
+validate collection maximum length.
+
+```ruby
+attribute(:attribute) do
+  should have_at_most(5).characters
+end
+```
+
+#### `be_*`
+
+validate using predicate method.
+
+```ruby
+attribute(:attribute) do
+  should be_valid # passes of attribute.valid? is true
+end
+```
+
+### Defining simple validations (TODO)
+
+```ruby
+Inspector.define_constraint(:have_properties) do |*properties|
+  valid? do |object|
+    properties.all? { |property| object.has_key?(property) }
+  end
+end
+```
+
+### Defining custom validations (TODO)
+
+```ruby
+
+class HavePropertiesValidator
+  def validate(value, constraint, violations_list)
+    valid = constraint.properties.all? { |property| object.has_key?(property) }
+
+    if valid ^ constraint.positive?
+      violations_list << Inspector::Constraint::Violation.new(constraint)
+    end
+  end
+end
+
+class HavePropertiesConstraint
+  include Inspector::Constraint
+
+  def validator
+    :have_properties
+  end
+end
+
+Inspector.validators[:have_properties] = HavePropertiesValidator.new
+
+Inspector.define_constraint(:have_properties, HavePropertiesConstraint)
+```

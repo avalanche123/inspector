@@ -167,3 +167,59 @@ Feature: syntax
           email:
             should.be_an_email
       """
+
+  Scenario: hash validation
+    Given a file named "request.rb" with:
+      """
+      require 'inspector'
+
+      Inspector.valid("request parameters") do
+        property("title") do
+          should_not be_empty
+          should be_kind_of(String)
+          should have_at_least(3).characters
+        end
+
+        property("body") do
+          should_not be_empty
+          should be_kind_of(String)
+          should have_at_least(3).characters
+        end
+      end
+
+      violations = Inspector.validate({
+        "title" => 123,
+        "body"  => nil
+      }, :as => "request parameters")
+
+      puts violations unless violations.empty?
+      """
+    When I run `ruby request.rb`
+    Then the output should contain:
+      """
+      [title]:
+        should_not.be_empty
+        should.be_kind_of
+      [body]:
+        should_not.be_empty
+        should.be_kind_of
+        should.have_at_least
+      """
+
+    Scenario: array validation
+      Given a file named "request.rb" with:
+        """
+        require 'inspector'
+
+        Inspector.valid("emails") do
+          each_item.should be_an_email
+        end
+
+        puts Inspector.validate(["not an email", "username@example.com"], :as => "emails")
+        """
+      When I run `ruby request.rb`
+      Then the output should contain:
+        """
+        [0]:
+          should.be_an_email
+        """
